@@ -69,7 +69,6 @@ struct Day4: Day {
     }
 
     private static func checkWins(board: Board) -> Bool {
-        // Horizontal
         let verticalWin = stride(from: 0, through: 20, by: 5).contains(where: { index in
             checkWin(board: board, startIndex: index, increment: { $0 + 1 })
         })
