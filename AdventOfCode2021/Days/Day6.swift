@@ -18,20 +18,13 @@ struct Day6: Day {
     }
 
     private static func calculateCount(days: Int, lanternFish: [Int]) -> Int {
-        var lanternFish = lanternFish
-
-        var schools = [School]()
         var day = 1
+        var schools = Dictionary(grouping: lanternFish, by: { $0 }).reduce(into: [School]()) { result, tuple in
+            result.append(School(count: tuple.value.count, daysLeft: tuple.key))
+        }
+
         repeat {
             var newFish = 0
-            lanternFish = lanternFish.map {
-                if $0 == 0 {
-                    newFish += 1
-                    return 6
-                }
-                return $0 - 1
-            }
-
             for school in schools {
                 if school.daysLeft == 0 {
                     school.daysLeft = 6
@@ -47,7 +40,7 @@ struct Day6: Day {
             day += 1
         } while day <= days
 
-        return lanternFish.count + schools.map(\.count).reduce(0, +)
+        return schools.map(\.count).reduce(0, +)
     }
 }
 
