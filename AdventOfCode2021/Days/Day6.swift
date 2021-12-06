@@ -48,6 +48,24 @@ struct Day6: Day {
 
         return schools.map(\.count).reduce(0, +)
     }
+
+    private static func calculateCount2(days: Int, lanternFish: [Int]) -> Int {
+        var array = Array(repeating: 0, count: 9)
+        lanternFish.forEach { array[$0] += 1 }
+
+        var day = 1
+        repeat {
+            let newFish = array[0]
+            for index in (1...8) {
+                array[index - 1] = array[index]
+            }
+            array[8] = newFish
+            array[6] += newFish
+            day += 1
+        } while day <= days
+
+        return array.reduce(0, +)
+    }
 }
 
 // MARK: - Private types
