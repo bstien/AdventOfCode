@@ -34,6 +34,12 @@ struct Day6: Day {
                 }
             }
 
+            if day % 8 == 0 {
+                schools = Dictionary(grouping: schools, by: { $0.daysLeft }).reduce(into: [School]()) { result, tuple in
+                    result.append(School(count: tuple.value.map(\.count).reduce(0, +), daysLeft: tuple.key))
+                }
+            }
+
             if newFish >= 1 {
                 schools.append(School(count: newFish, daysLeft: 8))
             }
