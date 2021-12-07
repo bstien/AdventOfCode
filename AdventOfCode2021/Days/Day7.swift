@@ -18,4 +18,16 @@ struct Day7: Day {
 
         printResult(dayPart: dayPart, message: "Position \(optimalPosition.0), fuel \(optimalPosition.1)")
     }
+
+    private static func findMeanAndAveragePositions(positions: [Int]) {
+        // Strangely enough, these results match the positions of part 1 and 2.
+        // Not sure if it's a coincidence or that these are meant to be used.
+
+        let positions = positions.map(Double.init)
+        let meanPosition = Int(positions.sorted()[positions.count / 2])
+        print("🔥 Mean position = \(meanPosition)")
+
+        let averagePosition = Int(positions.reduce(0.0, +) / Double(positions.count))
+        print("🔥 Average position = \(averagePosition)")
+    }
 }
