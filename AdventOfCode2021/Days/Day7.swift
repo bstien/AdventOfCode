@@ -11,8 +11,8 @@ struct Day7: Day {
         let maxValue = positions.max()!
 
         let optimalPosition = (minValue..<maxValue).map { value -> (Int, Int) in
-            let cycles = positions.map { abs($0 - value) }.reduce(0, +)
-            return (value, cycles)
+            let fuel = positions.map { abs($0 - value) }.reduce(0, +)
+            return (value, fuel)
         }.min(by: { $0.1 <= $1.1 })!
 
         printResult(dayPart: 1, message: "Position \(optimalPosition.0), fuel \(optimalPosition.1)")
