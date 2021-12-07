@@ -8,14 +8,13 @@ struct Day7: Day {
     }
 
     private static func findOptimalPosition(dayPart: Int, positions: [Int], distanceMultiplier: (Int) -> Int) {
-        var positionsWithCount = Array(repeating: 0, count: positions.max()! + 1)
-        positions.forEach { positionsWithCount[$0] += 1 }
-        let positionsWithCrabs = Array(Set(positions))
+        let positionCount = Dictionary(grouping: positions, by: { $0 })
 
-        let optimalPosition = (0..<positionsWithCount.count).map { index -> (Int, Int) in
-            let fuel = positionsWithCrabs.map { distanceMultiplier(abs($0 - index)) * positionsWithCount[$0] }.reduce(0, +)
-            return (index, fuel)
-        }.min(by: { $0.1 <= $1.1 })!
+        let optimalPosition = (0...positions.max()!)
+            .map { position -> (Int, Int) in
+                (position, positionCount.map { distanceMultiplier(abs($0 - position)) * $1.count }.reduce(0, +))
+            }
+            .min(by: { $0.1 <= $1.1 })!
 
         printResult(dayPart: dayPart, message: "Position \(optimalPosition.0), fuel \(optimalPosition.1)")
     }
