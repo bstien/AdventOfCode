@@ -4,6 +4,7 @@ struct Day10: Day {
     static func run(input: String) {
         let characters = splitInput(input).map { $0.map { $0 } }
         part1(characters: characters)
+        part2(characters: characters)
     }
 
     private static func part1(characters: [[Character]]) {
@@ -28,6 +29,35 @@ struct Day10: Day {
         }.reduce(0, +)
 
         printResult(dayPart: 1, message: "Sum of illegal characters: \(sum)")
+    }
+
+    private static func part2(characters: [[Character]]) {
+        var sums = [Int]()
+
+        for line in characters {
+            var stack = [Character]()
+            var isCorrupt = false
+            for character in line {
+                if Character.openingCharacters.contains(character) {
+                    stack.append(character)
+                } else if Character.closingCharacters.contains(character) {
+                    if !(character.openingCharacter == stack.popLast()!) {
+                        isCorrupt = true
+                    }
+                }
+            }
+
+            if !isCorrupt {
+                let sum = stack.reversed().compactMap { $0.closingCharacter?.legalValue }.reduce(into: 0, { result, value in
+                    result = (result * 5) + value
+                })
+                sums.append(sum)
+            }
+        }
+
+        let middleSum = sums.sorted()[sums.count / 2]
+
+        printResult(dayPart: 2, message: "Middle sum: \(middleSum)")
     }
 }
 
@@ -57,6 +87,16 @@ private extension Character {
         case "]": return 57
         case "}": return 1197
         case ">": return 25137
+        default: return nil
+        }
+    }
+
+    var legalValue: Int? {
+        switch self {
+        case ")": return 1
+        case "]": return 2
+        case "}": return 3
+        case ">": return 4
         default: return nil
         }
     }
