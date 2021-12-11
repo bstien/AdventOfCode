@@ -2,7 +2,7 @@ import Foundation
 
 struct Day11: Day {
     static func run(input: String) {
-        var octopi = splitInput(input).map { $0.map { Int(String($0))! } }
+        let octopi = splitInput(input).map { $0.map { Int(String($0))! } }
         let part1 = run(steps: 100, octopi: octopi)
         let part2 = run(steps: 500, octopi: octopi)
 
