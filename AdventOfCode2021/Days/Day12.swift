@@ -2,40 +2,34 @@ import Foundation
 
 struct Day12: Day {
     static func run(input: String) {
-        let nodes = parse(input: input)
-        guard let startNode = nodes.first(where: { $0.kind == .start }) else {
+        guard let startNode = parseNodes(input: input).first(where: { $0.kind == .start }) else {
             printResult(result: .fail, dayPart: 1, message: "Couldn't find start node 😖")
             return
         }
 
-        part1(startNode: startNode)
-        part2(startNode: startNode)
+        let part1 = traverse(from: startNode)
+        let part2 = traverse(from: startNode, visitSmallNodeTwice: true)
+
+        printResult(dayPart: 1, message: "# of paths, visiting small caves max once: \(part1)")
+        printResult(dayPart: 2, message: "# of paths, visiting one small cave at max twice: \(part2)")
     }
 
-    private static func part1(startNode: CaveNode) {
-        let pathsWithEnding = traverse(from: startNode, dontVisit: [], path: Path()).filter { $0.nodes.last?.kind == .end }
-        printResult(dayPart: 1, message: "# of paths, visiting small caves max once: \(pathsWithEnding.count)")
-    }
-
-    private static func part2(startNode: CaveNode) {
-        let pathsWithEnding = traverse(from: startNode, dontVisit: [], path: Path(visitSmallNodeTwice: true)).filter { $0.nodes.last?.kind == .end }
-        printResult(dayPart: 2, message: "# of paths, visiting one small cave at max twice: \(pathsWithEnding.count)")
-    }
-
-    private static func traverse(from thisNode: CaveNode, dontVisit: Set<CaveNode>, path: Path) -> [Path] {
-        guard (path.visitSmallNodeTwice && thisNode.kind != .start) || !dontVisit.contains(thisNode) else {
-            return [path]
+    private static func traverse(
+        from thisNode: CaveNode,
+        dontVisit: Set<CaveNode> = [],
+        visitSmallNodeTwice: Bool = false
+    ) -> Int {
+        guard (visitSmallNodeTwice && thisNode.kind != .start) || !dontVisit.contains(thisNode) else {
+            return 0
         }
-
-        let hasAlreadyVisitedThisNode = dontVisit.contains(thisNode)
-        var path = path.insertAndCopy(node: thisNode)
 
         if thisNode.kind == .end {
-            return [path]
+            return 1
         }
 
-        if path.visitSmallNodeTwice, hasAlreadyVisitedThisNode {
-            path = path.setHasVisitedSmallNodeTwice()
+        var visitSmallNodeTwice = visitSmallNodeTwice
+        if visitSmallNodeTwice, dontVisit.contains(thisNode) {
+            visitSmallNodeTwice = false
         }
 
         var dontVisit = dontVisit
@@ -43,14 +37,12 @@ struct Day12: Day {
             dontVisit.insert(thisNode)
         }
 
-        return thisNode.neighbors.flatMap {
-            traverse(from: $0, dontVisit: dontVisit, path: path)
-        }
+        return thisNode.neighbors.map {
+            traverse(from: $0, dontVisit: dontVisit, visitSmallNodeTwice: visitSmallNodeTwice)
+        }.reduce(0, +)
     }
 
-    // MARK: - Parsing
-
-    private static func parse(input: String) -> Set<CaveNode> {
+    private static func parseNodes(input: String) -> Set<CaveNode> {
        let pairs = splitInput(input).map { splitInput($0, separator: "-") }
         return pairs.reduce(into: Set<CaveNode>()) { set, pair in
             let a = set.getOrCreate(id: pair[0])
@@ -82,29 +74,10 @@ private class CaveNode: Hashable {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(kind)
     }
 
     static func ==(lhs: CaveNode, rhs: CaveNode) -> Bool {
-        lhs.hashValue == rhs.hashValue
-    }
-}
-
-private struct Path {
-    let nodes: [CaveNode]
-    let visitSmallNodeTwice: Bool
-
-    init(nodes: [CaveNode] = [], visitSmallNodeTwice: Bool = false) {
-        self.nodes = nodes
-        self.visitSmallNodeTwice = visitSmallNodeTwice
-    }
-
-    func insertAndCopy(node: CaveNode) -> Path {
-        Path(nodes: nodes + [node], visitSmallNodeTwice: visitSmallNodeTwice)
-    }
-
-    func setHasVisitedSmallNodeTwice() -> Path {
-        Path(nodes: nodes, visitSmallNodeTwice: false)
+        lhs.id == rhs.id
     }
 }
 
