@@ -9,5 +9,5 @@ import Foundation
 // Day7.solve()
 // Day8.solve()
 // Day9.solve()
-// Day11.solve(includeTest: true)
-Day12.solve(includeTest: true)
+// Day11.solve()
+Day12.solve()
