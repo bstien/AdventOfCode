@@ -9,26 +9,33 @@ struct Day12: Day {
         }
 
         part1(startNode: startNode)
+        part2(startNode: startNode)
     }
 
     private static func part1(startNode: CaveNode) {
-        let pathsWithEnding = traverse(from: startNode, dontVisit: [], path: Path(nodes: [])).filter { $0.nodes.last?.kind == .end }
+        let pathsWithEnding = traverse(from: startNode, dontVisit: [], path: Path()).filter { $0.nodes.last?.kind == .end }
         printResult(dayPart: 1, message: "# of paths, visiting small caves max once: \(pathsWithEnding.count)")
     }
 
-    private static func traverse(
-        from thisNode: CaveNode,
-        dontVisit: Set<CaveNode>,
-        path: Path
-    ) -> [Path] {
-        if dontVisit.contains(thisNode) {
+    private static func part2(startNode: CaveNode) {
+        let pathsWithEnding = traverse(from: startNode, dontVisit: [], path: Path(visitSmallNodeTwice: true)).filter { $0.nodes.last?.kind == .end }
+        printResult(dayPart: 2, message: "# of paths, visiting one small cave at max twice: \(pathsWithEnding.count)")
+    }
+
+    private static func traverse(from thisNode: CaveNode, dontVisit: Set<CaveNode>, path: Path) -> [Path] {
+        guard (path.visitSmallNodeTwice && thisNode.kind != .start) || !dontVisit.contains(thisNode) else {
             return [path]
         }
 
-        let path = path.insertAndCopy(node: thisNode)
+        let hasAlreadyVisitedThisNode = dontVisit.contains(thisNode)
+        var path = path.insertAndCopy(node: thisNode)
 
         if thisNode.kind == .end {
             return [path]
+        }
+
+        if path.visitSmallNodeTwice, hasAlreadyVisitedThisNode {
+            path = path.setHasVisitedSmallNodeTwice()
         }
 
         var dontVisit = dontVisit
@@ -66,12 +73,11 @@ private enum NodeKind: Hashable {
 private class CaveNode: Hashable {
     let id: String
     let kind: NodeKind
-    var neighbors: Set<CaveNode>
+    var neighbors: Set<CaveNode> = []
 
     init(id: String, kind: NodeKind) {
         self.id = id
         self.kind = kind
-        neighbors = []
     }
 
     func hash(into hasher: inout Hasher) {
@@ -86,9 +92,19 @@ private class CaveNode: Hashable {
 
 private struct Path {
     let nodes: [CaveNode]
+    let visitSmallNodeTwice: Bool
+
+    init(nodes: [CaveNode] = [], visitSmallNodeTwice: Bool = false) {
+        self.nodes = nodes
+        self.visitSmallNodeTwice = visitSmallNodeTwice
+    }
 
     func insertAndCopy(node: CaveNode) -> Path {
-        Path(nodes: nodes + [node])
+        Path(nodes: nodes + [node], visitSmallNodeTwice: visitSmallNodeTwice)
+    }
+
+    func setHasVisitedSmallNodeTwice() -> Path {
+        Path(nodes: nodes, visitSmallNodeTwice: false)
     }
 }
 
