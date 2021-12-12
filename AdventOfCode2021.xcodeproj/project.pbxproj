@@ -57,6 +57,7 @@
 		68AE08D4C4566FA76F164ECA /* Day7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Day7.txt; sourceTree = "<group>"; };
 		68AE0BEA733207EDA9AB88D4 /* Day4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Day4.txt; sourceTree = "<group>"; };
 		68AE0C986D30297CB482D832 /* Day5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day5.swift; sourceTree = "<group>"; };
+		68AE0E89538557D97BE8CDD2 /* Day11.test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Day11.test.txt; sourceTree = "<group>"; };
 		824EDDF22757A24700FC5A71 /* AdventOfCode2021 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode2021; sourceTree = BUILT_PRODUCTS_DIR; };
 		824EDDF52757A24700FC5A71 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		824EDE072757A3AB00FC5A71 /* Input.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 				5B9598EF0D70F932F6417F1A /* Day9.txt */,
 				5B959B4498341B46214E3D2E /* Day10.txt */,
 				68AE0075CE78FC9CDBAC20B0 /* Day11.txt */,
+				68AE0E89538557D97BE8CDD2 /* Day11.test.txt */,
 			);
 			path = Inputs;
 			sourceTree = "<group>";
@@ -146,6 +148,7 @@
 				5B959D43027B2A270B1D4D14 /* Day9.swift */,
 				5B95929520ABD263079FBDDF /* Day10.swift */,
 				68AE064F2A4140E48DF5A33B /* Day11.swift */,
+				68AE045EFDB60F20D5C89027 /* Day12.swift */,
 			);
 			path = Days;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				5B959A55C66D7685BD38011B /* Day9.swift in Sources */,
 				5B959DC3A1C829D4507E6AC7 /* Day10.swift in Sources */,
 				68AE06A1D10CC277179EA3AA /* Day11.swift in Sources */,
+				68AE00D9129943EFB6A06ED7 /* Day12.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

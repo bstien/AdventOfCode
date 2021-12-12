@@ -11,14 +11,20 @@ protocol Day {
 }
 
 extension Day {
-    static func solve(input: String? = nil) {
+    static private var numberFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.minimumIntegerDigits = 1
         formatter.maximumFractionDigits = 3
+        return formatter
+    }
 
-        guard let input = input ?? readInputFromFile() else {
-            print("Could not open input file \(Self.self).txt")
-            return
+    static func solve(includeTest: Bool = false) {
+        if includeTest {
+            runTest()
+        }
+
+        guard let input = readInputFromFile() else {
+            fatalError("Could not open input file \(Self.self).txt")
         }
 
         print("Solving \(Self.self)")
@@ -28,13 +34,34 @@ extension Day {
         let end = CACurrentMediaTime()
 
         let elapsed = end - start
-        print("Solved \(Self.self) in \(formatter.string(from: NSNumber(value: elapsed))!)s")
+        print("Solved \(Self.self) in \(numberFormatter.string(from: NSNumber(value: elapsed))!)s")
+
+        print("—————————————————————————————————")
+    }
+
+    private static func runTest() {
+        guard let input = readTestInputFromFile() else {
+            fatalError("Could not open test input file \(Self.self).test.txt")
+        }
+
+        print("Running test for \(Self.self)")
+
+        let start = CACurrentMediaTime()
+        run(input: input)
+        let end = CACurrentMediaTime()
+
+        let elapsed = end - start
+        print("Solved \(Self.self) in \(numberFormatter.string(from: NSNumber(value: elapsed))!)s")
 
         print("—————————————————————————————————")
     }
 
     private static func readInputFromFile() -> String? {
         try? Input.get("\(Self.self).txt")
+    }
+
+    private static func readTestInputFromFile() -> String? {
+        try? Input.get("\(Self.self).test.txt")
     }
 
     static func splitInput(_ input: String, separator: Character = "\n", omittingEmptySubsequences: Bool = true) -> [String] {
