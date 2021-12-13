@@ -11,4 +11,4 @@ import Foundation
 // Day9.solve()
 // Day11.solve()
 // Day12.solve()
-Day13.solve(includeTest: true)
+Day13.solve()

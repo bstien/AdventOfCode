@@ -44,7 +44,7 @@ struct Day13: Day {
         let maxY = points.map(\.y).max()! + 1
 
         var grid = Array(repeating: Array(repeating: " ", count: maxX), count: maxY)
-        points.forEach { grid[$0.y][$0.x] = "X" }
+        points.forEach { grid[$0.y][$0.x] = "█" }
 
         let code = grid.map { $0.joined() }.joined(separator: "\n")
         printResult(dayPart: 2, message: "The code to enter:\n\n\(code)\n")
