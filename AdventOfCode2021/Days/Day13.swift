@@ -11,31 +11,23 @@ struct Day13: Day {
     }
 
     private static func fold(points: [Point], folds: [Fold]) -> [Point] {
-        var maxX = points.map(\.x).max()! + 1
-        var maxY = points.map(\.y).max()! + 1
-
         var points = Set(points)
         folds.forEach { fold in
-            switch fold {
-            case .x(let x): maxX = x
-            case .y(let y): maxY = y
-            }
+            points = points.reduce(into: Set<Point>()) { set, point in
+                let newPoint: Point
 
-            let newPoints = points.map { point -> Point in
-                if point.isOnOtherSideOfFold(x: maxX, y: maxY) {
-                    switch fold {
-                    case .x:
-                        return Point(x: abs(point.x - (maxX * 2)), y: point.y)
-                    case .y:
-                        return Point(x: point.x, y: abs(point.y - (maxY * 2)))
-                    }
-                } else {
-                    return point
+                switch fold {
+                case .x(let x) where point.x > x:
+                    newPoint = Point(x: abs(point.x - (x * 2)), y: point.y)
+                case .y(let y) where point.y > y:
+                    newPoint = Point(x: point.x, y: abs(point.y - (y * 2)))
+                default:
+                    newPoint = point
                 }
-            }
-            points = Set(newPoints)
-        }
 
+                set.insert(newPoint)
+            }
+        }
         return Array(points)
     }
 
@@ -83,10 +75,6 @@ struct Day13: Day {
 private struct Point: Hashable {
     let x: Int
     let y: Int
-
-    func isOnOtherSideOfFold(x: Int, y: Int) -> Bool {
-        self.x > x || self.y > y
-    }
 }
 
 private enum Fold {
