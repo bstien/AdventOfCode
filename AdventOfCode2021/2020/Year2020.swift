@@ -1,7 +1,7 @@
 import Foundation
 
-enum Year2021: Year {
-    static var year = 2021
+enum Year2020: Year {
+    static var year = 2020
     static var days: [Day.Type] = [
         Day1.self,
         Day2.self,
@@ -16,10 +16,22 @@ enum Year2021: Year {
         Day11.self,
         Day12.self,
         Day13.self,
+        Day14.self,
+        Day15.self,
+        Day16.self,
+        Day17.self,
+        Day18.self,
+        Day19.self,
+        Day20.self,
+        Day21.self,
+        Day22.self,
+        Day23.self,
+        Day24.self,
+        Day25.self,
     ]
 }
 
-extension Year2021 {
+extension Year2020 {
     class Day1: Day {}
     class Day2: Day {}
     class Day3: Day {}
@@ -33,4 +45,16 @@ extension Year2021 {
     class Day11: Day {}
     class Day12: Day {}
     class Day13: Day {}
+    class Day14: Day {}
+    class Day15: Day {}
+    class Day16: Day {}
+    class Day17: Day {}
+    class Day18: Day {}
+    class Day19: Day {}
+    class Day20: Day {}
+    class Day21: Day {}
+    class Day22: Day {}
+    class Day23: Day {}
+    class Day24: Day {}
+    class Day25: Day {}
 }
