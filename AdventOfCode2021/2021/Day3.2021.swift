@@ -1,13 +1,13 @@
 import Foundation
 
-struct Day3: Day {
-    static func run(input: String) {
+extension Year2021.Day3: Runnable {
+    func run(input: String) {
         let inputList = splitInput(input).map { $0.asBoolList }
         part1(inputList: inputList)
         part2(inputList: inputList)
     }
 
-    private static func part1(inputList: [[Bool]]) {
+    private func part1(inputList: [[Bool]]) {
         let summed = inputList
             .first!
             .enumerated()
@@ -19,14 +19,14 @@ struct Day3: Day {
         printResult(dayPart: 1, message: "Gamma (\(gammaRate)) * epsilon (\(epsilonRate)) = \(gammaRate * epsilonRate)")
     }
 
-    private static func part2(inputList: [[Bool]]) {
+    private func part2(inputList: [[Bool]]) {
         let oxygenGeneratorRating = reduce(inputList, strategy: .keepHigherOrTrue)
         let co2ScrubberRating = reduce(inputList, strategy: .keepLowerOrFalse)
 
         printResult(dayPart: 2, message: "Oxygen (\(oxygenGeneratorRating)) * CO2 (\(co2ScrubberRating)) = \(oxygenGeneratorRating * co2ScrubberRating)")
     }
 
-    private static func reduce(_ inputList: [[Bool]], strategy: Strategy) -> Int {
+    private func reduce(_ inputList: [[Bool]], strategy: Strategy) -> Int {
         var currentIndex = 0
         var list = inputList
 

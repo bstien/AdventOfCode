@@ -1,7 +1,7 @@
 import Foundation
 
-struct Day13: Day {
-    static func run(input: String) {
+extension Year2021.Day13: Runnable {
+    func run(input: String) {
         let (points, folds) = parse(input: input)
         let part1 = fold(points: points, folds: [folds.first!])
         let part2 = fold(points: points, folds: folds)
@@ -10,7 +10,7 @@ struct Day13: Day {
         printPart2(points: part2)
     }
 
-    private static func fold(points: [Point], folds: [Fold]) -> [Point] {
+    private func fold(points: [Point], folds: [Fold]) -> [Point] {
         var points = Set(points)
         folds.forEach { fold in
             points = points.reduce(into: Set<Point>()) { set, point in
@@ -27,7 +27,7 @@ struct Day13: Day {
         return Array(points)
     }
 
-    private static func printPart2(points: [Point]) {
+    private func printPart2(points: [Point]) {
         let maxX = points.map(\.x).max()! + 1
         let maxY = points.map(\.y).max()! + 1
 
@@ -38,7 +38,7 @@ struct Day13: Day {
         printResult(dayPart: 2, message: "The code to enter:\n\n\(code)\n")
     }
 
-        private static func parse(input: String) -> ([Point], [Fold]) {
+    private func parse(input: String) -> ([Point], [Fold]) {
         var points = [Point]()
         var folds = [Fold]()
 
@@ -52,7 +52,7 @@ struct Day13: Day {
             }
 
             if parseFolds {
-                let values = splitInput(splitInput(line, separator: " ").last!, separator: "=" )
+                let values = splitInput(splitInput(line, separator: " ").last!, separator: "=")
                 if values[0] == "x" {
                     folds.append(.x(Int(values[1])!))
                 } else {

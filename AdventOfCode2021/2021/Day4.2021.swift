@@ -4,8 +4,8 @@ private typealias GivenNumbers = [Int]
 private typealias Board = [BoardNumber]
 private typealias WinResult = (lastNumber: Int, board: Board)
 
-struct Day4: Day {
-    static func run(input: String) {
+extension Year2021.Day4: Runnable {
+    func run(input: String) {
         let inputList = splitInput(input)
         let givenNumbers = inputList.givenNumbers()
         let boards = inputList.boards()
@@ -14,12 +14,12 @@ struct Day4: Day {
         part2(givenNumbers: givenNumbers, boards: boards)
     }
 
-    private static func part1(givenNumbers: GivenNumbers, boards: [Board]) {
+    private func part1(givenNumbers: GivenNumbers, boards: [Board]) {
         let winResult = play(givenNumbers: givenNumbers, boards: boards)
         printResult(winResult: winResult, dayPart: 1)
     }
 
-    private static func part2(givenNumbers: GivenNumbers, boards: [Board]) {
+    private func part2(givenNumbers: GivenNumbers, boards: [Board]) {
         var boards = boards
         var lastWinResult: WinResult?
         while true {
@@ -38,7 +38,7 @@ struct Day4: Day {
         printResult(winResult: lastWinResult, dayPart: 2)
     }
 
-    private static func printResult(winResult: WinResult?, dayPart: Int) {
+    private func printResult(winResult: WinResult?, dayPart: Int) {
         guard let winResult = winResult else {
             printResult(result: .fail, dayPart: dayPart, message: "Couldn't find the last winning board 🙁")
             return
@@ -49,7 +49,7 @@ struct Day4: Day {
         printResult(dayPart: dayPart, message: "Unmarked numbers (\(sumOfUnmarkedNumbers)) * lastNumber (\(winResult.lastNumber)) = \(multiplied)")
     }
 
-    private static func play(givenNumbers: GivenNumbers, boards: [Board]) -> WinResult? {
+    private func play(givenNumbers: GivenNumbers, boards: [Board]) -> WinResult? {
         for (index, givenNumber) in givenNumbers.enumerated() {
             markBoards(number: givenNumber, boards: boards)
 
@@ -62,13 +62,13 @@ struct Day4: Day {
         return nil
     }
 
-    private static func markBoards(number: Int, boards: [Board]) {
+    private func markBoards(number: Int, boards: [Board]) {
         boards.forEach {
             $0.filter { $0.value == number }.forEach { $0.isMarked = true }
         }
     }
 
-    private static func checkWins(board: Board) -> Bool {
+    private func checkWins(board: Board) -> Bool {
         let verticalWin = stride(from: 0, through: 20, by: 5).contains(where: { index in
             checkWin(board: board, startIndex: index, increment: { $0 + 1 })
         })
@@ -80,7 +80,7 @@ struct Day4: Day {
         })
     }
 
-    private static func checkWin(board: Board, startIndex: Int, increment: (Int) -> Int) -> Bool {
+    private func checkWin(board: Board, startIndex: Int, increment: (Int) -> Int) -> Bool {
         var currentIndex = startIndex
         for _ in 0..<5 {
             if !board.indices.contains(currentIndex) || !board[currentIndex].isMarked {

@@ -1,13 +1,13 @@
 import Foundation
 
-struct Day10: Day {
-    static func run(input: String) {
+extension Year2021.Day10: Runnable {
+    func run(input: String) {
         let characters = splitInput(input).map { $0.map { $0 } }
         part1(characters: characters)
         part2(characters: characters)
     }
 
-    private static func part1(characters: [[Character]]) {
+    private func part1(characters: [[Character]]) {
         var illegalCharacters = [Character: Int]()
 
         for line in characters {
@@ -31,7 +31,7 @@ struct Day10: Day {
         printResult(dayPart: 1, message: "Sum of illegal characters: \(sum)")
     }
 
-    private static func part2(characters: [[Character]]) {
+    private func part2(characters: [[Character]]) {
         var sums = [Int]()
 
         for line in characters {

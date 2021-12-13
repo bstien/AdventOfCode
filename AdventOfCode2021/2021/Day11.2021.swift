@@ -1,7 +1,7 @@
 import Foundation
 
-struct Day11: Day {
-    static func run(input: String) {
+extension Year2021.Day11: Runnable {
+    func run(input: String) {
         let octopi = splitInput(input).map { $0.map { Int(String($0))! } }
         let part1 = run(steps: 100, octopi: octopi)
         let part2 = run(steps: nil, octopi: octopi)
@@ -15,7 +15,7 @@ struct Day11: Day {
         }
     }
 
-    private static func run(steps: Int?, octopi: [[Int]]) -> (flashes: Int, allFlashStep: Int?) {
+    private func run(steps: Int?, octopi: [[Int]]) -> (flashes: Int, allFlashStep: Int?) {
         var octopi = octopi
         var numberOfFlashes = 0
         let numberOfOctopi = octopi.map({ $0.count }).reduce(0, +)
@@ -39,7 +39,7 @@ struct Day11: Day {
         return (flashes: numberOfFlashes, allFlashStep: nil)
     }
 
-    private static func flash(x: Int, y: Int, octopi: inout [[Int]], flashedPositions: inout Set<FlashPosition>) {
+    private func flash(x: Int, y: Int, octopi: inout [[Int]], flashedPositions: inout Set<FlashPosition>) {
         guard y >= 0, y < octopi.count, x >= 0, x < octopi[y].count else { return }
 
         let position = FlashPosition(x: x, y: y)

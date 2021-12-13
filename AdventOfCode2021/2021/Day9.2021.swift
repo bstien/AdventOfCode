@@ -1,13 +1,13 @@
 import Foundation
 
-struct Day9: Day {
-    static func run(input: String) {
+extension Year2021.Day9: Runnable {
+    func run(input: String) {
         let landscape = splitInput(input).map { $0.map { Int(String($0))! } }
         part1(landscape: landscape)
         part2(landscape: landscape)
     }
 
-    private static func part1(landscape: [[Int]]) {
+    private func part1(landscape: [[Int]]) {
         var lowPoints = [Int]()
         for y in (0..<landscape.count) {
             for x in (0..<landscape[y].count) {
@@ -27,7 +27,7 @@ struct Day9: Day {
         printResult(dayPart: 1, message: "Sum of all low positions: \(sum)")
     }
 
-    private static func part2(landscape: [[Int]]) {
+    private func part2(landscape: [[Int]]) {
         var basins = [Int?]()
         var checkedPositions = Set<CheckedPosition>()
 

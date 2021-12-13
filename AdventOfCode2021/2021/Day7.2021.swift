@@ -1,13 +1,13 @@
 import Foundation
 
-struct Day7: Day {
-    static func run(input: String) {
+extension Year2021.Day7: Runnable {
+    func run(input: String) {
         let positions = splitInput(input).first!.split(separator: ",").map(String.init).compactMap(Int.init)
         findOptimalPosition(dayPart: 1, positions: positions, distanceMultiplier: { $0 })
         findOptimalPosition(dayPart: 2, positions: positions, distanceMultiplier: { ($0 * ($0 + 1)) / 2 })
     }
 
-    private static func findOptimalPosition(dayPart: Int, positions: [Int], distanceMultiplier: (Int) -> Int) {
+    private func findOptimalPosition(dayPart: Int, positions: [Int], distanceMultiplier: (Int) -> Int) {
         let positionCount = Dictionary(grouping: positions, by: { $0 })
 
         let optimalPosition = (0...positions.max()!)
@@ -19,7 +19,7 @@ struct Day7: Day {
         printResult(dayPart: dayPart, message: "Position \(optimalPosition.0), fuel \(optimalPosition.1)")
     }
 
-    private static func findMeanAndAveragePositions(positions: [Int]) {
+    private func findMeanAndAveragePositions(positions: [Int]) {
         // Strangely enough, these results match the positions of part 1 and 2.
         // Not sure if it's a coincidence or that these are meant to be used.
 

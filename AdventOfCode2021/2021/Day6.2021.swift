@@ -1,23 +1,23 @@
 import Foundation
 
-struct Day6: Day {
-    static func run(input: String) {
+extension Year2021.Day6: Runnable {
+    func run(input: String) {
         let lanternFish = splitInput(input).first!.split(separator: ",").map(String.init).compactMap(Int.init)
         part1(lanternFish: lanternFish)
         part2(lanternFish: lanternFish)
     }
 
-    private static func part1(lanternFish: [Int]) {
+    private func part1(lanternFish: [Int]) {
         let count = calculateCount(days: 80, lanternFish: lanternFish)
         printResult(dayPart: 1, message: "Count after 80 days: \(count)")
     }
 
-    private static func part2(lanternFish: [Int]) {
+    private func part2(lanternFish: [Int]) {
         let count = calculateCount(days: 256, lanternFish: lanternFish)
         printResult(dayPart: 2, message: "Count after 256 days: \(count)")
     }
 
-    private static func calculateCount(days: Int, lanternFish: [Int]) -> Int {
+    private func calculateCount(days: Int, lanternFish: [Int]) -> Int {
         var day = 1
         var schools = Dictionary(grouping: lanternFish, by: { $0 }).reduce(into: [School]()) { result, tuple in
             result.append(School(count: tuple.value.count, daysLeft: tuple.key))
@@ -49,7 +49,7 @@ struct Day6: Day {
         return schools.map(\.count).reduce(0, +)
     }
 
-    private static func calculateCount2(days: Int, lanternFish: [Int]) -> Int {
+    private func calculateCount2(days: Int, lanternFish: [Int]) -> Int {
         var array = Array(repeating: 0, count: 9)
         lanternFish.forEach { array[$0] += 1 }
 

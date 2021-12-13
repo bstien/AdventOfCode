@@ -1,23 +1,23 @@
 import Foundation
 
-struct Day5: Day {
-    static func run(input: String) {
+extension Year2021.Day5: Runnable {
+    func run(input: String) {
         let pipes = splitInput(input).map(\.asPipe)
         part1(pipes: pipes)
         part2(pipes: pipes)
     }
 
-    private static func part1(pipes: [Pipe]) {
+    private func part1(pipes: [Pipe]) {
         let overlappingPipes = countOverlaps(pipes: pipes, includeDiagonals: false)
         printResult(dayPart: 1, message: "Overlapping pipes: \(overlappingPipes)")
     }
 
-    private static func part2(pipes: [Pipe]) {
+    private func part2(pipes: [Pipe]) {
         let overlappingPipes = countOverlaps(pipes: pipes, includeDiagonals: true)
         printResult(dayPart: 2, message: "Overlapping pipes w/ diagonals: \(overlappingPipes)")
     }
 
-    private static func countOverlaps(pipes: [Pipe], includeDiagonals: Bool) -> Int {
+    private func countOverlaps(pipes: [Pipe], includeDiagonals: Bool) -> Int {
         var grid = Array(repeating: Array(repeating: 0, count: 1000), count: 1000)
 
         for pipe in pipes {
@@ -39,7 +39,7 @@ struct Day5: Day {
         return grid.map { x in x.filter { $0 >= 2 } }.flatMap { $0 }.count
     }
 
-    private static func stride(_ from: Int, _ to: Int) -> StrideThrough<Int> {
+    private func stride(_ from: Int, _ to: Int) -> StrideThrough<Int> {
         let increment = from <= to ? 1 : -1
         return Swift.stride(from: from, through: to, by: increment)
     }

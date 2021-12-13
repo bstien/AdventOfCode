@@ -2,14 +2,14 @@ import Foundation
 
 private typealias Command = (String, Int)
 
-struct Day2: Day {
-    static func run(input: String) {
+extension Year2021.Day2: Runnable {
+    func run(input: String) {
         let commands = splitInput(input).splitCommands()
         part1(commands: commands)
         part2(commands: commands)
     }
 
-    private static func part1(commands: [Command]) {
+    private func part1(commands: [Command]) {
         var distance = 0
         var depth = 0
 
@@ -29,7 +29,7 @@ struct Day2: Day {
         printResult(dayPart: 1, message: "Distance * depth = \(distance * depth)")
     }
 
-    private static func part2(commands: [Command]) {
+    private func part2(commands: [Command]) {
         var distance = 0
         var depth = 0
         var aim = 0

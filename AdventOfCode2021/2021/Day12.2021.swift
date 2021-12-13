@@ -1,7 +1,7 @@
 import Foundation
 
-struct Day12: Day {
-    static func run(input: String) {
+extension Year2021.Day12: Runnable {
+    func run(input: String) {
         guard let startNode = parseNodes(input: input).first(where: { $0.kind == .start }) else {
             printResult(result: .fail, dayPart: 1, message: "Couldn't find start node 😖")
             return
@@ -14,7 +14,7 @@ struct Day12: Day {
         printResult(dayPart: 2, message: "# of paths, visiting one small cave at max twice: \(part2)")
     }
 
-    private static func traverse(
+    private func traverse(
         from thisNode: CaveNode,
         dontVisit: Set<CaveNode> = [],
         visitSmallNodeTwice: Bool = false
@@ -42,7 +42,7 @@ struct Day12: Day {
         }.reduce(0, +)
     }
 
-    private static func parseNodes(input: String) -> Set<CaveNode> {
+    private func parseNodes(input: String) -> Set<CaveNode> {
        let pairs = splitInput(input).map { splitInput($0, separator: "-") }
         return pairs.reduce(into: Set<CaveNode>()) { set, pair in
             let a = set.getOrCreate(id: pair[0])
