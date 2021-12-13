@@ -4,8 +4,10 @@ struct Day13: Day {
     static func run(input: String) {
         let (points, folds) = parse(input: input)
         let part1 = fold(points: points, folds: [folds.first!])
+        let part2 = fold(points: points, folds: folds)
 
         printResult(dayPart: 1, message: "Number of points after 1 fold: \(part1.count)")
+        printPart2(points: part2)
     }
 
     private static func fold(points: [Point], folds: [Fold]) -> [Point] {
@@ -37,7 +39,18 @@ struct Day13: Day {
         return Array(points)
     }
 
-    private static func parse(input: String) -> ([Point], [Fold]) {
+    private static func printPart2(points: [Point]) {
+        let maxX = points.map(\.x).max()! + 1
+        let maxY = points.map(\.y).max()! + 1
+
+        var grid = Array(repeating: Array(repeating: " ", count: maxX), count: maxY)
+        points.forEach { grid[$0.y][$0.x] = "X" }
+
+        let code = grid.map { $0.joined() }.joined(separator: "\n")
+        printResult(dayPart: 2, message: "The code to enter:\n\n\(code)\n")
+    }
+
+        private static func parse(input: String) -> ([Point], [Fold]) {
         var points = [Point]()
         var folds = [Fold]()
 
