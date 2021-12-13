@@ -14,18 +14,14 @@ struct Day13: Day {
         var points = Set(points)
         folds.forEach { fold in
             points = points.reduce(into: Set<Point>()) { set, point in
-                let newPoint: Point
-
                 switch fold {
                 case .x(let x) where point.x > x:
-                    newPoint = Point(x: abs(point.x - (x * 2)), y: point.y)
+                    set.insert(Point(x: abs(point.x - (x * 2)), y: point.y))
                 case .y(let y) where point.y > y:
-                    newPoint = Point(x: point.x, y: abs(point.y - (y * 2)))
+                    set.insert(Point(x: point.x, y: abs(point.y - (y * 2))))
                 default:
-                    newPoint = point
+                    set.insert(point)
                 }
-
-                set.insert(newPoint)
             }
         }
         return Array(points)
