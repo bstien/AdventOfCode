@@ -17,27 +17,28 @@ extension Year2021.Day14: Runnable {
             result[character, default: 0] += 1
         }
 
-        polymer.windows(ofCount: 2).forEach { pair in
-            iterate(iterations: iterations, characters: String(pair), rules: rules, countDict: &countDict)
+        var pairsToMap = polymer.windows(ofCount: 2).map { String($0) }.reduce(into: [String: Int]()) { set, string in
+            set[string, default: 0] += 1
+        }
+
+        for _ in (0..<iterations) {
+            var newPairsToMap = [String: Int]()
+            for pair in pairsToMap {
+                if let characterToAdd = rules[pair.key] {
+                    countDict[characterToAdd, default: 0] += pair.value
+
+                    let newPairA = "\(pair.key.first!)\(characterToAdd)"
+                    let newPairB = "\(characterToAdd)\(pair.key.last!)"
+                    newPairsToMap[newPairA, default: 0] += pair.value
+                    newPairsToMap[newPairB, default: 0] += pair.value
+                }
+            }
+            pairsToMap = newPairsToMap
         }
 
         let min = countDict.map(\.value).min()!
         let max = countDict.map(\.value).max()!
         return max - min
-    }
-
-    func iterate(iterations: Int, characters: String, rules: [String: Character], countDict: inout [Character: Int]) {
-        guard
-            iterations != 0,
-            let characterToAdd = rules[characters]
-        else { return }
-
-        countDict[characterToAdd, default: 0] += 1
-
-        let pairA = "\(characters.first!)\(characterToAdd)"
-        let pairB = "\(characterToAdd)\(characters.last!)"
-        iterate(iterations: iterations - 1, characters: pairA, rules: rules, countDict: &countDict)
-        iterate(iterations: iterations - 1, characters: pairB, rules: rules, countDict: &countDict)
     }
 
     private func parse(input: String) -> (String, [String: Character]) {
