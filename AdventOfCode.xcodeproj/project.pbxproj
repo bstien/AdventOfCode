@@ -30,6 +30,7 @@
 		68AE0AD96C0425F9E557D241 /* Day11.2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0642CCC08FDC40851DD0 /* Day11.2020.swift */; };
 		68AE0AF8539FD8D20956E703 /* Day8.2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0246B3B0A287B39277FD /* Day8.2021.swift */; };
 		68AE0B86E854E51BA0327FF0 /* Year2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE05B24E697505513CC5EF /* Year2021.swift */; };
+		68AE0C325F8BE99E8E58B7D5 /* Day15.2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0089E5ABFBDC41D3D1FA /* Day15.2021.swift */; };
 		68AE0CD47EB8A6941FC86F42 /* Day11.2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE03F0E3A66FBCB0BB5550 /* Day11.2021.swift */; };
 		68AE0CECFC97FD1EF556B7DA /* Day3.2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE074978E6078466E290E6 /* Day3.2020.swift */; };
 		68AE0D0428501C89292B2D5D /* Day2.2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0D568C3B925B4BADD2A6 /* Day2.2020.swift */; };
@@ -56,6 +57,7 @@
 
 /* Begin PBXFileReference section */
 		68AE002F70D387FE73B58E7E /* 2021.3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.3.txt; sourceTree = "<group>"; };
+		68AE0089E5ABFBDC41D3D1FA /* Day15.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day15.2021.swift; sourceTree = "<group>"; };
 		68AE00B6592D74A7D498BE36 /* Day7.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day7.2021.swift; sourceTree = "<group>"; };
 		68AE00F218F8A771DEBAACE1 /* 2020.7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2020.7.txt; sourceTree = "<group>"; };
 		68AE01300FCF7C4715450E00 /* 2021.13.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.13.txt; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 		68AE058AF2B0D69D22F34A6A /* Day9.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day9.2021.swift; sourceTree = "<group>"; };
 		68AE05A5BA289A4B1C80657E /* 2021.5.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.5.txt; sourceTree = "<group>"; };
 		68AE05B24E697505513CC5EF /* Year2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Year2021.swift; sourceTree = "<group>"; };
+		68AE05CD0093F591B1D61D5D /* 2021.15.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.15.txt; sourceTree = "<group>"; };
 		68AE0642CCC08FDC40851DD0 /* Day11.2020.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day11.2020.swift; sourceTree = "<group>"; };
 		68AE0654A467518708253D07 /* Day13.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day13.2021.swift; sourceTree = "<group>"; };
 		68AE069F5BDD413285B5ABAA /* Day10.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day10.2021.swift; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 		68AE08855F36A64E1F0F4033 /* 2021.8.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.8.txt; sourceTree = "<group>"; };
 		68AE0895FE0F1F39F176D721 /* 2021.11.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.11.txt; sourceTree = "<group>"; };
 		68AE08A1BD36F840A7F2E646 /* 2021.1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.1.txt; sourceTree = "<group>"; };
+		68AE08E86C42A6D13FA8C431 /* 2021.15.test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.15.test.txt; sourceTree = "<group>"; };
 		68AE093678F9D4D541A5B428 /* Day1.2020.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day1.2020.swift; sourceTree = "<group>"; };
 		68AE09D5DD36B5599D9F2D74 /* 2021.7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.7.txt; sourceTree = "<group>"; };
 		68AE0A6DF00B75869891EC87 /* 2021.14.test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.14.test.txt; sourceTree = "<group>"; };
@@ -164,6 +168,8 @@
 				68AE0559C6BF358CD5F6136B /* 2020.11.txt */,
 				68AE0A6DF00B75869891EC87 /* 2021.14.test.txt */,
 				68AE03E70AE37CCF036DE4D1 /* 2021.14.txt */,
+				68AE08E86C42A6D13FA8C431 /* 2021.15.test.txt */,
+				68AE05CD0093F591B1D61D5D /* 2021.15.txt */,
 			);
 			path = Inputs;
 			sourceTree = "<group>";
@@ -205,6 +211,7 @@
 				68AE01D8A36CD3A54F0D1F05 /* Day6.2021.swift */,
 				68AE05B24E697505513CC5EF /* Year2021.swift */,
 				68AE0A733F644BC66722C210 /* Day14.2021.swift */,
+				68AE0089E5ABFBDC41D3D1FA /* Day15.2021.swift */,
 			);
 			path = 2021;
 			sourceTree = "<group>";
@@ -303,7 +310,7 @@
 			);
 			mainGroup = 824EDDE92757A24700FC5A71;
 			packageReferences = (
-				82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */,
 			);
 			productRefGroup = 824EDDF32757A24700FC5A71 /* Products */;
 			projectDirPath = "";
@@ -351,6 +358,7 @@
 				68AE0A1ABC7ADBEC93F6FB91 /* Day10.2020.swift in Sources */,
 				68AE0AD96C0425F9E557D241 /* Day11.2020.swift in Sources */,
 				68AE032FDC043F5EBE503C9C /* Day14.2021.swift in Sources */,
+				68AE0C325F8BE99E8E58B7D5 /* Day15.2021.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,7 +530,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+		82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-algorithms.git";
 			requirement = {
@@ -535,7 +543,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		82B76DB22768DBC1005B212C /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			package = 82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */;
 			productName = Algorithms;
 		};
 /* End XCSwiftPackageProductDependency section */
