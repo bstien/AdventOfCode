@@ -76,12 +76,4 @@ extension Day {
               —————————————————————————————————
               """)
     }
-
-    private func readInputFromFile() -> String? {
-        try? Input.get("y\(year)d\(day).txt")
-    }
-
-    private func readTestInputFromFile() -> String? {
-        try? Input.get("y\(year)d\(day).test.txt")
-    }
 }
