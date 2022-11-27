@@ -1,15 +1,6 @@
 import Foundation
 import QuartzCore
 
-enum Result {
-    case success
-    case fail
-}
-
-protocol Runnable {
-    func run(input: String)
-}
-
 class Day {
     let year: Int
     let day: Int

@@ -35,6 +35,8 @@
 		68AE0CD47EB8A6941FC86F42 /* Day11.2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE03F0E3A66FBCB0BB5550 /* Day11.2021.swift */; };
 		68AE0CECFC97FD1EF556B7DA /* Day3.2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE074978E6078466E290E6 /* Day3.2020.swift */; };
 		68AE0D0428501C89292B2D5D /* Day2.2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0D568C3B925B4BADD2A6 /* Day2.2020.swift */; };
+		68AE0D736E0C415E4E80962A /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE096A9E20EFABD5D60A56 /* Result.swift */; };
+		68AE0DAC91E29D25250F8BCB /* Runnable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0A49169F0982C7CF6C5D /* Runnable.swift */; };
 		68AE0DEED1EB96E2EA8BAD7B /* Year2020.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE0E904FADD34B8C0C6CDA /* Year2020.swift */; };
 		68AE0DFD4CD6728F9DF0EFB9 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE04A462EA20FA7CDF683D /* Day.swift */; };
 		68AE0F5038AAE78E481D9321 /* Day7.2021.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AE00B6592D74A7D498BE36 /* Day7.2021.swift */; };
@@ -104,8 +106,10 @@
 		68AE08A1BD36F840A7F2E646 /* 2021.1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.1.txt; sourceTree = "<group>"; };
 		68AE08E86C42A6D13FA8C431 /* 2021.15.test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.15.test.txt; sourceTree = "<group>"; };
 		68AE093678F9D4D541A5B428 /* Day1.2020.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day1.2020.swift; sourceTree = "<group>"; };
+		68AE096A9E20EFABD5D60A56 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		68AE09D5DD36B5599D9F2D74 /* 2021.7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.7.txt; sourceTree = "<group>"; };
 		68AE09F32119E3E5AD440900 /* Day16.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day16.2021.swift; sourceTree = "<group>"; };
+		68AE0A49169F0982C7CF6C5D /* Runnable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Runnable.swift; sourceTree = "<group>"; };
 		68AE0A6DF00B75869891EC87 /* 2021.14.test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 2021.14.test.txt; sourceTree = "<group>"; };
 		68AE0A733F644BC66722C210 /* Day14.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day14.2021.swift; sourceTree = "<group>"; };
 		68AE0B6509EC428152A88D09 /* Day12.2021.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day12.2021.swift; sourceTree = "<group>"; };
@@ -223,6 +227,15 @@
 			path = 2021;
 			sourceTree = "<group>";
 		};
+		68AE0EFCAB5FE5E7D6C8F3F2 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				68AE0A49169F0982C7CF6C5D /* Runnable.swift */,
+				68AE096A9E20EFABD5D60A56 /* Result.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		824EDDE92757A24700FC5A71 = {
 			isa = PBXGroup;
 			children = (
@@ -250,6 +263,7 @@
 				68AE040F34E8F03CF683498E /* Year.swift */,
 				68AE0862C569C1991E0EB554 /* Inputs */,
 				68AE09A46E678401C575F1EA /* 2020 */,
+				68AE0EFCAB5FE5E7D6C8F3F2 /* Utils */,
 			);
 			path = AdventOfCode;
 			sourceTree = "<group>";
@@ -317,7 +331,7 @@
 			);
 			mainGroup = 824EDDE92757A24700FC5A71;
 			packageReferences = (
-				82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */,
+				82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 			);
 			productRefGroup = 824EDDF32757A24700FC5A71 /* Products */;
 			projectDirPath = "";
@@ -367,6 +381,8 @@
 				68AE032FDC043F5EBE503C9C /* Day14.2021.swift in Sources */,
 				68AE0C325F8BE99E8E58B7D5 /* Day15.2021.swift in Sources */,
 				68AE00227490B668320B7188 /* Day16.2021.swift in Sources */,
+				68AE0DAC91E29D25250F8BCB /* Runnable.swift in Sources */,
+				68AE0D736E0C415E4E80962A /* Result.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +554,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */ = {
+		82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-algorithms.git";
 			requirement = {
@@ -551,7 +567,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		82B76DB22768DBC1005B212C /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms.git" */;
+			package = 82B76DB12768DBC1005B212C /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
 		};
 /* End XCSwiftPackageProductDependency section */
