@@ -1,3 +1,3 @@
 import Foundation
 
-Year2021.runLatest(includeTest: true)
+Year2022.runLatest(includeTest: true)
