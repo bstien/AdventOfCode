@@ -2,7 +2,7 @@ import Foundation
 
 extension Year2022.Day1: Runnable {
     func run(input: String) {
-        let elves = input.components(separatedBy: "\n\n").map { splitInput($0).compactMap(Int.init) }
+        let elves = splitInput(input, separatedBy: "\n\n").map { splitInput($0).compactMap(Int.init) }
         let calorieCount = elves.map { $0.reduce(0, +) }.sorted(by: { $0 > $1 })
 
         printResult(dayPart: 1, message: "Elf with highest calorie count: \(calorieCount.max()!)")

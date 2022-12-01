@@ -52,14 +52,14 @@ extension Year2021.Day13: Runnable {
             }
 
             if parseFolds {
-                let values = splitInput(splitInput(line, separator: " ").last!, separator: "=")
+                let values = splitInput(splitInput(line, separatedBy: " ").last!, separatedBy: "=")
                 if values[0] == "x" {
                     folds.append(.x(Int(values[1])!))
                 } else {
                     folds.append(.y(Int(values[1])!))
                 }
             } else {
-                let numbers = splitInput(line, separator: ",").compactMap { Int($0) }
+                let numbers = splitInput(line, separatedBy: ",").compactMap { Int($0) }
                 points.append(Point(x: numbers[0], y: numbers[1]))
             }
         }

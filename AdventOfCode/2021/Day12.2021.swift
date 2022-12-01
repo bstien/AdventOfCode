@@ -43,7 +43,7 @@ extension Year2021.Day12: Runnable {
     }
 
     private func parseNodes(input: String) -> Set<CaveNode> {
-       let pairs = splitInput(input).map { splitInput($0, separator: "-") }
+       let pairs = splitInput(input).map { splitInput($0, separatedBy: "-") }
         return pairs.reduce(into: Set<CaveNode>()) { set, pair in
             let a = set.getOrCreate(id: pair[0])
             let b = set.getOrCreate(id: pair[1])

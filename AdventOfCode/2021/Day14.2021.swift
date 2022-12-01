@@ -47,7 +47,7 @@ extension Year2021.Day14: Runnable {
 
         var rules = [String: Character]()
         for line in lines {
-            let split = splitInput(line, separator: " ")
+            let split = splitInput(line, separatedBy: " ")
             rules[split[0]] = split[2].first!
         }
 

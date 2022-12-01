@@ -29,8 +29,15 @@ extension Day {
         solveAndPrint()
     }
 
-    func splitInput(_ input: String, separator: Character = "\n", omittingEmptySubsequences: Bool = true) -> [String] {
-        input.split(separator: separator, omittingEmptySubsequences: omittingEmptySubsequences).map(String.init)
+    func splitInput(_ input: String, separatedBy: String = "\n", omittingEmptySubsequences: Bool = true) -> [String] {
+        input
+            .components(separatedBy: separatedBy)
+            .compactMap { element in
+                if omittingEmptySubsequences, element.isEmpty {
+                    return nil
+                }
+                return element
+            }
     }
 
     func printResult(result: Result = .success, dayPart: Int, message: String) {
