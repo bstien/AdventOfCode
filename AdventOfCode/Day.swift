@@ -21,12 +21,14 @@ extension Day {
 
     // MARK: - Internal methods
 
-    func solve(includeTest: Bool = false) {
-        if includeTest {
-            solveAndPrint(isTest: includeTest)
+    func solve(runTask: Bool = true, runTest: Bool = false) {
+        if runTest {
+            solveAndPrint(isTest: true)
         }
 
-        solveAndPrint()
+        if runTask {
+            solveAndPrint()
+        }
     }
 
     func splitInput(_ input: String, separatedBy: String = "\n", omittingEmptySubsequences: Bool = true) -> [String] {

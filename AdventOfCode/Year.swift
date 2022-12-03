@@ -4,22 +4,22 @@ protocol Year {
     static var year: Int { get }
     static var days: [Day.Type] { get }
 
-    static func run(day: Int, includeTest: Bool)
+    static func run(day: Int, runTest: Bool)
     static func runAll()
-    static func runLatest(includeTest: Bool)
+    static func runLatest(runTask: Bool, runTest: Bool)
 }
 
 extension Year {
-    static func run(day: Int, includeTest: Bool = false) {
-        daysInitialized[day - 1].solve(includeTest: includeTest)
+    static func run(day: Int, runTest: Bool = false) {
+        daysInitialized[day - 1].solve(runTest: runTest)
     }
 
     static func runAll() {
         daysInitialized.forEach { $0.solve() }
     }
 
-    static func runLatest(includeTest: Bool = false) {
-        daysInitialized.last?.solve(includeTest: includeTest)
+    static func runLatest(runTask: Bool = true, runTest: Bool = false) {
+        daysInitialized.last?.solve(runTask: runTask, runTest: runTest)
     }
 
     private static var daysInitialized: [Day] {
