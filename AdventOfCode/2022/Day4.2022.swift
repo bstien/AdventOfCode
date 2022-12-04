@@ -23,33 +23,16 @@ extension Year2022.Day4: Runnable {
                         return second.contains(first.lowerBound)
                     }
 
-                    if first.lowerBound <= second.lowerBound, first.upperBound >= second.upperBound {
-                        return true
-                    }
-
-                    return false
+                    return first.lowerBound <= second.lowerBound && first.upperBound >= second.upperBound
                 }
             }
             .count
 
-        printResult(dayPart: 1, message: "Number of overlapping pairs: \(fullyOverlapping)")
+        printResult(dayPart: 1, message: "Number of fully overlapping pairs: \(fullyOverlapping)")
     }
 
     private func part2(elfPairs: [ElfPair]) {
-        let overlappingSections = elfPairs
-            .filter { elfPair in
-                let (lhs, rhs) = (elfPair.lhs, elfPair.rhs)
-
-                if lhs.isSingleSection, rhs.contains(lhs.lowerBound) {
-                    return true
-                } else if rhs.isSingleSection, lhs.contains(rhs.lowerBound) {
-                    return true
-                }
-
-                return lhs.contains(where: { rhs.contains($0) })
-            }
-            .count
-
+        let overlappingSections = elfPairs.filter { $0.lhs.overlaps($0.rhs) }.count
         printResult(dayPart: 2, message: "Number of overlapping sections: \(overlappingSections)")
     }
 }
