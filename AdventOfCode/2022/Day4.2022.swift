@@ -10,6 +10,11 @@ extension Year2022.Day4: Runnable {
             return ElfPair(lhs: elves[0][0]...elves[0][1], rhs: elves[1][0]...elves[1][1])
         }
 
+        part1(elfPairs: elfPairs)
+        part2(elfPairs: elfPairs)
+    }
+
+    private func part1(elfPairs: [ElfPair]) {
         let fullyOverlapping = elfPairs
             .filter { elfPair in
                 let (lhs, rhs) = (elfPair.lhs, elfPair.rhs)
@@ -28,6 +33,24 @@ extension Year2022.Day4: Runnable {
             .count
 
         printResult(dayPart: 1, message: "Number of overlapping pairs: \(fullyOverlapping)")
+    }
+
+    private func part2(elfPairs: [ElfPair]) {
+        let overlappingSections = elfPairs
+            .filter { elfPair in
+                let (lhs, rhs) = (elfPair.lhs, elfPair.rhs)
+
+                if lhs.isSingleSection, rhs.contains(lhs.lowerBound) {
+                    return true
+                } else if rhs.isSingleSection, lhs.contains(rhs.lowerBound) {
+                    return true
+                }
+
+                return lhs.contains(where: { rhs.contains($0) })
+            }
+            .count
+
+        printResult(dayPart: 2, message: "Number of overlapping sections: \(overlappingSections)")
     }
 }
 
