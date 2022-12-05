@@ -26,9 +26,9 @@ extension Year2022.Day5: Runnable {
 
             switch strategy {
             case .single:
-                crates[instruction.to, default: []].append(contentsOf: cratesToMove.reversed())
+                crates[instruction.to]?.append(contentsOf: cratesToMove.reversed())
             case .multiple:
-                crates[instruction.to, default: []].append(contentsOf: cratesToMove)
+                crates[instruction.to]?.append(contentsOf: cratesToMove)
             }
         }
 
@@ -38,33 +38,21 @@ extension Year2022.Day5: Runnable {
 
     private func parseCrates(lines: some Collection<String>) -> [Int: [Character]] {
         var crates = [Int: [Character]]()
-        for line in lines {
-            let slices = splitInput(line, separatedBy: " ", omittingEmptySubsequences: false)
-            var sliceIndex = 0
-            var crateStack = 1
-            repeat {
-                defer { crateStack += 1 }
-
-                let slice = slices[sliceIndex]
-                if slice.isEmpty {
-                    sliceIndex += 4
-                    continue
-                }
-
-                crates[crateStack, default: []].insert(slice.characterAt(1), at: 0)
-                sliceIndex += 1
-            } while sliceIndex < slices.count
+        lines.flatMap { $0.chunks(ofCount: 4).enumerated() }.forEach { chunk in
+            if chunk.element.first == " " { return }
+            crates[chunk.offset + 1, default: []].insert(chunk.element.characterAt(1), at: 0)
         }
         return crates
     }
 
     private func parseInstructions(lines: some Collection<String>) -> [MoveInstruction] {
-        lines.map { line -> MoveInstruction in
-            guard let match = line.firstMatch(of: /move (\d+) from (\d+) to (\d+)/) else {
+        let regex = Regex(/move (\d+) from (\d+) to (\d+)/)
+        return lines.map { line -> MoveInstruction in
+            guard let match = line.firstMatch(of: regex) else {
                 fatalError("Line did not match regex: '\(line)'")
             }
 
-            let intValues = [match.output.1, match.output.2, match.output.3].compactMap { Int($0) }
+            let intValues = match.output[1...3].compactMap(\.substring).compactMap { Int($0) }
             return MoveInstruction(count: intValues[0], from: intValues[1], to: intValues[2])
         }
     }

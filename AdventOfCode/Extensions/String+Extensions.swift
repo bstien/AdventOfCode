@@ -1,12 +1,14 @@
 import Foundation
 
+extension StringProtocol {
+    func characterAt(_ offset: Int) -> Character {
+        self[index(startIndex, offsetBy: offset)]
+    }
+}
+
 extension String {
     subscript(offset: Int) -> String {
         String(characterAt(offset))
-    }
-
-    func characterAt(_ offset: Int) -> Character {
-        self[index(startIndex, offsetBy: offset)]
     }
 
     func matches(regex: String) -> Bool {
