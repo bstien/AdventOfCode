@@ -4,18 +4,48 @@ import Foundation
 extension Year2022.Day5: Runnable {
     func run(input: String) {
         let lines = splitInput(input)
-        var crates = [Int: [Character]]()
 
         let crateLines = lines.prefix(while: { !$0.starts(with: /\s\d/) })
-        let instructionLines = lines.dropFirst(crateLines.count + 1)
+        var crates = parseCrates(lines: crateLines)
 
-        // Setup crates.
-        for line in crateLines {
+        let instructionLines = lines.dropFirst(crateLines.count + 1)
+        let instructions = parseInstructions(lines: instructionLines)
+
+        moveCrates(strategy: .single, crates: crates, instructions: instructions)
+        moveCrates(strategy: .multiple, crates: crates, instructions: instructions)
+    }
+
+    private func moveCrates(strategy: MoveStrategy, crates: [Int: [Character]], instructions: [MoveInstruction]) {
+        var crates = crates
+
+        instructions.forEach { instruction in
+            var stackToRemoveFrom = crates[instruction.from, default: []]
+            let cratesToMove = stackToRemoveFrom.suffix(instruction.count)
+            stackToRemoveFrom.removeLast(instruction.count)
+            crates[instruction.from] = stackToRemoveFrom
+
+            switch strategy {
+            case .single:
+                cratesToMove.reversed().forEach {
+                    crates[instruction.to, default: []].append($0)
+                }
+            case .multiple:
+                crates[instruction.to, default: []].append(contentsOf: cratesToMove)
+            }
+        }
+
+        let topCrates = String(crates.keys.sorted().compactMap { crates[$0]?.last })
+        printResult(dayPart: strategy.rawValue, message: "Top crates after moving: \(topCrates)")
+    }
+
+    private func parseCrates(lines: some Collection<String>) -> [Int: [Character]] {
+        var crates = [Int: [Character]]()
+        for line in lines {
             let slices = splitInput(line, separatedBy: " ", omittingEmptySubsequences: false)
             var sliceIndex = 0
-            var position = 1
+            var crateStack = 1
             repeat {
-                defer { position += 1 }
+                defer { crateStack += 1 }
 
                 let slice = slices[sliceIndex]
                 if slice.isEmpty {
@@ -23,68 +53,29 @@ extension Year2022.Day5: Runnable {
                     continue
                 }
 
-                crates[position, default: []].insert(slice.characterAt(1), at: 0)
+                crates[crateStack, default: []].insert(slice.characterAt(1), at: 0)
                 sliceIndex += 1
             } while sliceIndex < slices.count
         }
+        return crates
+    }
 
-        // Read move instructions.
-        let instructionRegex = try Regex(/move (\d+) from (\d+) to (\d+)/)
-        let instructions = instructionLines.map { line in
-            guard let match = line.firstMatch(of: instructionRegex) else {
+    private func parseInstructions(lines: some Collection<String>) -> [MoveInstruction] {
+        lines.map { line -> MoveInstruction in
+            guard let match = line.firstMatch(of: /move (\d+) from (\d+) to (\d+)/) else {
                 fatalError("Line did not match regex: '\(line)'")
             }
 
-            let intValues = match.output[1...3].compactMap {
-                guard let substring = $0.substring, let int = Int(substring) else {
-                    fatalError()
-                }
-                return int
-            }
-
+            let intValues = [match.output.1, match.output.2, match.output.3].compactMap { Int($0) }
             return MoveInstruction(count: intValues[0], from: intValues[1], to: intValues[2])
         }
-
-        part1(crates: crates, instructions: instructions)
-        part2(crates: crates, instructions: instructions)
-    }
-
-    private func part1(crates: [Int: [Character]], instructions: [MoveInstruction]) {
-        var crates = crates
-
-        instructions.forEach { instruction in
-            var stackToRemoveFrom = crates[instruction.from, default: []]
-            let cratesToMove = stackToRemoveFrom.suffix(instruction.count)
-            stackToRemoveFrom.removeLast(instruction.count)
-
-            cratesToMove.reversed().forEach {
-                crates[instruction.to, default: []].append($0)
-            }
-            crates[instruction.from] = stackToRemoveFrom
-        }
-
-
-        let topCrates = String(crates.keys.sorted().compactMap { crates[$0]?.last })
-        printResult(dayPart: 1, message: "Top crates after moving: \(topCrates)")
-    }
-
-    private func part2(crates: [Int: [Character]], instructions: [MoveInstruction]) {
-        var crates = crates
-
-        instructions.forEach { instruction in
-            var stackToRemoveFrom = crates[instruction.from, default: []]
-            let cratesToMove = stackToRemoveFrom.suffix(instruction.count)
-            stackToRemoveFrom.removeLast(instruction.count)
-
-            crates[instruction.to, default: []].append(contentsOf: cratesToMove)
-            crates[instruction.from] = stackToRemoveFrom
-        }
-
-        let topCrates = String(crates.keys.sorted().compactMap { crates[$0]?.last })
-        printResult(dayPart: 2, message: "Top crates after moving: \(topCrates)")
     }
 }
 
 private extension Year2022.Day5 {
     typealias MoveInstruction = (count: Int, from: Int, to: Int)
+
+    private enum MoveStrategy: Int {
+        case single = 1, multiple
+    }
 }
