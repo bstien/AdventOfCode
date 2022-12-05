@@ -26,9 +26,7 @@ extension Year2022.Day5: Runnable {
 
             switch strategy {
             case .single:
-                cratesToMove.reversed().forEach {
-                    crates[instruction.to, default: []].append($0)
-                }
+                crates[instruction.to, default: []].append(contentsOf: cratesToMove.reversed())
             case .multiple:
                 crates[instruction.to, default: []].append(contentsOf: cratesToMove)
             }
