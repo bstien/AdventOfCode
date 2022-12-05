@@ -45,6 +45,13 @@ extension Year2022.Day5: Runnable {
             return MoveInstruction(count: intValues[0], from: intValues[1], to: intValues[2])
         }
 
+        part1(crates: crates, instructions: instructions)
+        part2(crates: crates, instructions: instructions)
+    }
+
+    private func part1(crates: [Int: [Character]], instructions: [MoveInstruction]) {
+        var crates = crates
+
         instructions.forEach { instruction in
             var stackToRemoveFrom = crates[instruction.from, default: []]
             let cratesToMove = stackToRemoveFrom.suffix(instruction.count)
@@ -59,6 +66,22 @@ extension Year2022.Day5: Runnable {
 
         let topCrates = String(crates.keys.sorted().compactMap { crates[$0]?.last })
         printResult(dayPart: 1, message: "Top crates after moving: \(topCrates)")
+    }
+
+    private func part2(crates: [Int: [Character]], instructions: [MoveInstruction]) {
+        var crates = crates
+
+        instructions.forEach { instruction in
+            var stackToRemoveFrom = crates[instruction.from, default: []]
+            let cratesToMove = stackToRemoveFrom.suffix(instruction.count)
+            stackToRemoveFrom.removeLast(instruction.count)
+
+            crates[instruction.to, default: []].append(contentsOf: cratesToMove)
+            crates[instruction.from] = stackToRemoveFrom
+        }
+
+        let topCrates = String(crates.keys.sorted().compactMap { crates[$0]?.last })
+        printResult(dayPart: 2, message: "Top crates after moving: \(topCrates)")
     }
 }
 
