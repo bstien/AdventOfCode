@@ -2,7 +2,11 @@ import Foundation
 
 extension String {
     subscript(offset: Int) -> String {
-        String(self[index(startIndex, offsetBy: offset)])
+        String(characterAt(offset))
+    }
+
+    func characterAt(_ offset: Int) -> Character {
+        self[index(startIndex, offsetBy: offset)]
     }
 
     func matches(regex: String) -> Bool {
