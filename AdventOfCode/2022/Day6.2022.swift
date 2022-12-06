@@ -3,15 +3,21 @@ import Foundation
 extension Year2022.Day6: Runnable {
     func run(input: String) {
         let input = input.trimmingCharacters(in: .newlines)
-
-        let packetStart = input.windows(ofCount: 4).enumerated().first { tuple in
-            let dict = tuple.element.reduce(into: [Character: Int]()) { dictionary, character in
-                dictionary[character, default: 0] += 1
-            }
-
-            return dict.values.allSatisfy { $0 == 1 }
-        }.map { $0.offset + 4 }!
+        let packetStart = findPosition(input: input, windowSize: 4)
+        let messageStart = findPosition(input: input, windowSize: 14)
 
         printResult(dayPart: 1, message: "Position of packet start: \(packetStart)")
+        printResult(dayPart: 2, message: "Position of message start: \(messageStart)")
+    }
+
+    private func findPosition(input: String, windowSize: Int) -> Int {
+        input
+            .windows(ofCount: windowSize)
+            .enumerated()
+            .first { tuple in
+                let set = Set(tuple.element)
+                return set.count == windowSize
+            }
+            .map { $0.offset + windowSize }!
     }
 }
