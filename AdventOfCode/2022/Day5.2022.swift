@@ -1,6 +1,5 @@
 import Foundation
 
-
 extension Year2022.Day5: Runnable {
     func run(input: String) {
         let lines = splitInput(input)

@@ -8,6 +8,7 @@ enum Year2022: Year {
         Day3.self,
         Day4.self,
         Day5.self,
+        Day6.self,
     ]
 }
 
@@ -17,4 +18,5 @@ extension Year2022 {
     class Day3: Day {}
     class Day4: Day {}
     class Day5: Day {}
+    class Day6: Day {}
 }
