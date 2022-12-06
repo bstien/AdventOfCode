@@ -14,10 +14,7 @@ extension Year2022.Day6: Runnable {
         input
             .windows(ofCount: windowSize)
             .enumerated()
-            .first { tuple in
-                let set = Set(tuple.element)
-                return set.count == windowSize
-            }
+            .first { Set($0.element).count == windowSize }
             .map { $0.offset + windowSize }!
     }
 }
