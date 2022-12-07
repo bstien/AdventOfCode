@@ -4,12 +4,18 @@ extension Year2022.Day7: Runnable {
     func run(input: String) {
         let lines = splitInput(input)
         let rootFolder = traverseFilesystem(lines: lines)
+        let folderSizes = sizeOfFolders(within: rootFolder)
 
-        let sizeOfSmallFolders = sizeOfFolders(within: rootFolder).filter { $0 <= 100_000 }.reduce(0, +)
+        // Part 1.
+        let sizeOfSmallFolders = folderSizes.filter { $0 <= 100_000 }.reduce(0, +)
         printResult(dayPart: 1, message: "Size of small folders: \(sizeOfSmallFolders)")
 
+        // Part 2.
         let amountToDelete = 30_000_000 - (70_000_000 - rootFolder.size)
-        let sizeOfFolderToDelete = sizeOfFolders(within: rootFolder).sorted().first { $0 >= amountToDelete }!
+        guard let sizeOfFolderToDelete = folderSizes.sorted().first(where: { $0 >= amountToDelete }) else {
+            fatalError("Found no folder to delete :(")
+        }
+
         printResult(dayPart: 2, message: "Size of folder to delete: \(sizeOfFolderToDelete)")
     }
 
