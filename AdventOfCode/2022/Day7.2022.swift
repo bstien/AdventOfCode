@@ -5,7 +5,7 @@ extension Year2022.Day7: Runnable {
         let lines = splitInput(input)
         let rootFolder = parseLines(lines: lines)
 
-        let sizeOfSmallFolders = sizeOfSmallFolders(within: rootFolder)
+        let sizeOfSmallFolders = sizeOfFolders(within: rootFolder).filter { $0 <= 100_000 }.reduce(0, +)
         printResult(dayPart: 1, message: "Size of small folders: \(sizeOfSmallFolders)")
 
         let amountToDelete = 30_000_000 - (70_000_000 - rootFolder.size)
@@ -15,11 +15,6 @@ extension Year2022.Day7: Runnable {
 
     private func sizeOfFolders(within folder: Folder) -> [Int] {
         folder.childFolders.map(\.size) + folder.childFolders.flatMap { sizeOfFolders(within: $0) }
-    }
-
-    private func sizeOfSmallFolders(within folder: Folder) -> Int {
-        let folderSize = folder.size
-        return (folderSize <= 100_000 ? folderSize : 0) + folder.childFolders.map { sizeOfSmallFolders(within: $0) }.reduce(0, +)
     }
 
     private func parseLines(lines: [String]) -> Folder {
