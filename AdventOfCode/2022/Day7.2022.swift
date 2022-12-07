@@ -3,7 +3,7 @@ import Foundation
 extension Year2022.Day7: Runnable {
     func run(input: String) {
         let lines = splitInput(input)
-        let rootFolder = parseLines(lines: lines)
+        let rootFolder = traverseFilesystem(lines: lines)
 
         let sizeOfSmallFolders = sizeOfFolders(within: rootFolder).filter { $0 <= 100_000 }.reduce(0, +)
         printResult(dayPart: 1, message: "Size of small folders: \(sizeOfSmallFolders)")
@@ -17,7 +17,7 @@ extension Year2022.Day7: Runnable {
         folder.childFolders.map(\.size) + folder.childFolders.flatMap { sizeOfFolders(within: $0) }
     }
 
-    private func parseLines(lines: [String]) -> Folder {
+    private func traverseFilesystem(lines: [String]) -> Folder {
         var lineIndex = 0
         var rootFolder: Folder?
         var currentFolder: Folder?
@@ -27,47 +27,58 @@ extension Year2022.Day7: Runnable {
             let command = Command(line: line)
 
             switch command {
-            case .cd(let dir):
+            case .cd(let argument):
                 if currentFolder != nil {
-                    if dir == ".." {
+                    if argument == ".." {
                         currentFolder = currentFolder?.parent
                     } else {
-                        currentFolder = currentFolder?.findFolder(with: dir)
+                        currentFolder = currentFolder?.findFolder(with: argument)
                     }
                 } else {
-                    rootFolder = Folder(name: dir)
+                    rootFolder = Folder(name: argument)
                     currentFolder = rootFolder
                 }
                 lineIndex += 1
             case .ls:
-                var linesOfOutput = 0
+                var children = [SizeCalculatable]()
+                var nextLine = lineIndex + 1
+
                 repeat {
-                    let nextIndex = lineIndex + linesOfOutput + 1
-                    if nextIndex >= lines.count || lines[nextIndex].hasPrefix("$") {
+                    let line = lines[nextLine]
+
+                    if line.hasPrefix("$") {
                         break
                     }
-                    linesOfOutput += 1
-                } while true
 
-                currentFolder?.children = lines[lineIndex + 1...lineIndex + linesOfOutput].map { line -> SizeCalculatable in
-                    let components = line.components(separatedBy: " ")
-                    if components[0] == "dir" {
-                        return Folder(name: components[1], parent: currentFolder)
-                    }
+                    children.append(parseOutput(line: line, parent: currentFolder))
+                    nextLine += 1
+                } while nextLine < lines.count
 
-                    guard let size = Int(components[0]) else {
-                        fatalError("Could not map '\(components[0])' to Int")
-                    }
-                    return File(name: components[1], size: size, parent: currentFolder)
-                }
-
-                lineIndex += linesOfOutput + 1
+                currentFolder?.children = children
+                lineIndex = nextLine
             }
         } while lineIndex < lines.count
 
         guard let rootFolder else { fatalError("Wasn't able to parse rootFolder") }
         return rootFolder
     }
+
+    private func parseOutput(line: String, parent: Folder?) -> SizeCalculatable {
+        let components = line.components(separatedBy: " ")
+
+        if components[0] == "dir" {
+            return Folder(name: components[1], parent: parent)
+        } else {
+            guard let size = Int(components[0]) else {
+                fatalError("Could not map '\(components[0])' to Int")
+            }
+            return File(name: components[1], size: size)
+        }
+    }
+}
+
+private protocol SizeCalculatable {
+    var size: Int { get }
 }
 
 private extension Year2022.Day7 {
@@ -91,12 +102,10 @@ private extension Year2022.Day7 {
     struct File: SizeCalculatable {
         let name: String
         let size: Int
-        var parent: Folder?
 
-        init(name: String, size: Int, parent: Folder?) {
+        init(name: String, size: Int) {
             self.name = name
             self.size = size
-            self.parent = parent
         }
     }
 
@@ -125,8 +134,4 @@ private extension Year2022.Day7 {
             return folder
         }
     }
-}
-
-private protocol SizeCalculatable {
-    var size: Int { get }
 }
