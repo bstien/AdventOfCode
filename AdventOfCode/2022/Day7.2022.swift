@@ -5,13 +5,21 @@ extension Year2022.Day7: Runnable {
         let lines = splitInput(input)
         let rootFolder = parseLines(lines: lines)
 
-        let sizeOfSmallFolders = findSmallFolders(within: rootFolder)
+        let sizeOfSmallFolders = sizeOfSmallFolders(within: rootFolder)
         printResult(dayPart: 1, message: "Size of small folders: \(sizeOfSmallFolders)")
+
+        let amountToDelete = 30_000_000 - (70_000_000 - rootFolder.size)
+        let sizeOfFolderToDelete = sizeOfFolders(within: rootFolder).sorted().first { $0 >= amountToDelete }!
+        printResult(dayPart: 2, message: "Size of folder to delete: \(sizeOfFolderToDelete)")
     }
 
-    private func findSmallFolders(within folder: Folder) -> Int {
+    private func sizeOfFolders(within folder: Folder) -> [Int] {
+        folder.childFolders.map(\.size) + folder.childFolders.flatMap { sizeOfFolders(within: $0) }
+    }
+
+    private func sizeOfSmallFolders(within folder: Folder) -> Int {
         let folderSize = folder.size
-        return (folderSize <= 100_000 ? folderSize : 0) + folder.childFolders.compactMap { findSmallFolders(within: $0) }.reduce(0, +)
+        return (folderSize <= 100_000 ? folderSize : 0) + folder.childFolders.map { sizeOfSmallFolders(within: $0) }.reduce(0, +)
     }
 
     private func parseLines(lines: [String]) -> Folder {
@@ -37,16 +45,16 @@ extension Year2022.Day7: Runnable {
                 }
                 lineIndex += 1
             case .ls:
-                var outputCount = 0
+                var linesOfOutput = 0
                 repeat {
-                    let nextIndex = lineIndex + outputCount + 1
+                    let nextIndex = lineIndex + linesOfOutput + 1
                     if nextIndex >= lines.count || lines[nextIndex].hasPrefix("$") {
                         break
                     }
-                    outputCount += 1
+                    linesOfOutput += 1
                 } while true
 
-                currentFolder?.children = lines[lineIndex + 1...lineIndex + outputCount].map { line -> SizeCalculatable in
+                currentFolder?.children = lines[lineIndex + 1...lineIndex + linesOfOutput].map { line -> SizeCalculatable in
                     let components = line.components(separatedBy: " ")
                     if components[0] == "dir" {
                         return Folder(name: components[1], parent: currentFolder)
@@ -58,14 +66,11 @@ extension Year2022.Day7: Runnable {
                     return File(name: components[1], size: size, parent: currentFolder)
                 }
 
-                lineIndex += outputCount + 1
+                lineIndex += linesOfOutput + 1
             }
         } while lineIndex < lines.count
 
-        guard let rootFolder else {
-            fatalError("Wasn't able to parse rootFolder")
-        }
-
+        guard let rootFolder else { fatalError("Wasn't able to parse rootFolder") }
         return rootFolder
     }
 }
