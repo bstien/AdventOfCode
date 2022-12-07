@@ -18,12 +18,12 @@ extension Year2022.Day7: Runnable {
     }
 
     private func traverseFilesystem(lines: [String]) -> Folder {
-        var lineIndex = 0
+        var currentLine = 0
         var rootFolder: Folder?
         var currentFolder: Folder?
 
         repeat {
-            let line = lines[lineIndex]
+            let line = lines[currentLine]
             let command = Command(line: line)
 
             switch command {
@@ -38,10 +38,10 @@ extension Year2022.Day7: Runnable {
                     rootFolder = Folder(name: argument)
                     currentFolder = rootFolder
                 }
-                lineIndex += 1
+                currentLine += 1
             case .ls:
                 var children = [SizeCalculatable]()
-                var nextLine = lineIndex + 1
+                var nextLine = currentLine + 1
 
                 repeat {
                     let line = lines[nextLine]
@@ -55,9 +55,9 @@ extension Year2022.Day7: Runnable {
                 } while nextLine < lines.count
 
                 currentFolder?.children = children
-                lineIndex = nextLine
+                currentLine = nextLine
             }
-        } while lineIndex < lines.count
+        } while currentLine < lines.count
 
         guard let rootFolder else { fatalError("Wasn't able to parse rootFolder") }
         return rootFolder
