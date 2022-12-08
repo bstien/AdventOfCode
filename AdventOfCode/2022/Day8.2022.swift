@@ -6,9 +6,15 @@ extension Year2022.Day8: Runnable {
         let width = forest.first!.count
         let height = forest.count
 
-        var visibleTrees = Set<VisibleTree>()
+        part1(forest: forest, width: width, height: height)
+        part2(forest: forest, width: width, height: height)
+    }
+
+    private func part1(forest: Forest, width: Int, height: Int) {
+        var visibleTrees = Set<Tree>()
         let widthRange = (0..<width)
         let heightRange = (0..<height)
+
         Direction.allCases.forEach { direction in
             var position = direction.startPosition(width: width, height: height)
 
@@ -23,7 +29,7 @@ extension Year2022.Day8: Runnable {
 
                 if tree > lastVisibleTreeHeight {
                     lastVisibleTreeHeight = tree
-                    visibleTrees.insert(VisibleTree(position: position, height: tree))
+                    visibleTrees.insert(Tree(position: position, height: tree))
 
                     if tree == 9 {
                         lastVisibleTreeHeight = -1
@@ -38,21 +44,53 @@ extension Year2022.Day8: Runnable {
 
         printResult(dayPart: 1, message: "Number of visible trees: \(visibleTrees.count)")
     }
-}
 
-private extension Array where Element == [Int] {
-    func tree(for position: Year2022.Day8.Position) -> Int? {
-        guard indices.contains(position.y), self[position.y].indices.contains(position.x) else {
-            return nil
+    private func part2(forest: Forest, width: Int, height: Int) {
+        var bestScenicScore = 0
+        let widthRange = (0..<width)
+        let heightRange = (0..<height)
+
+        for x in widthRange {
+            for y in heightRange {
+                let position = Position(x: x, y: y)
+                guard let height = forest.tree(for: position) else { fatalError("Could not find tree for x: \(x), y: \(y)") }
+
+                let tree = Tree(position: position, height: height)
+                let scenicScore = Direction.allCases.map { findScenicScore(from: tree, direction: $0, forest: forest) }.reduce(1, *)
+
+                if scenicScore > bestScenicScore {
+                    bestScenicScore = scenicScore
+                }
+            }
         }
-        return self[position.y][position.x]
+
+        printResult(dayPart: 2, message: "Best scenic score: \(bestScenicScore)")
+    }
+
+    private func findScenicScore(from tree: Tree, direction: Direction, forest: Forest) -> Int {
+        var score = 0
+        var position = direction.nextPosition(from: tree.position)
+        repeat {
+            guard let nextTree = forest.tree(for: position) else { break }
+            score += 1
+            if nextTree >= tree.height { break }
+            position = direction.nextPosition(from: position)
+        } while true
+        return score
     }
 }
 
 private extension Year2022.Day8 {
+    typealias Forest = [[Int]]
+
     struct Position: Hashable {
         let x: Int
         let y: Int
+    }
+
+    struct Tree: Hashable {
+        let position: Position
+        let height: Int
     }
 
     enum Direction: CaseIterable {
@@ -85,9 +123,13 @@ private extension Year2022.Day8 {
             }
         }
     }
+}
 
-    struct VisibleTree: Hashable {
-        let position: Position
-        let height: Int
+private extension Year2022.Day8.Forest {
+    func tree(for position: Year2022.Day8.Position) -> Int? {
+        guard indices.contains(position.y), self[position.y].indices.contains(position.x) else {
+            return nil
+        }
+        return self[position.y][position.x]
     }
 }
