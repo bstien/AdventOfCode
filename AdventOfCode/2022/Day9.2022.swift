@@ -7,54 +7,83 @@ extension Year2022.Day9: Runnable {
             return Move(direction: Direction(value: components[0]), length: Int(components[1])!)
         }
 
-        var headPosition = Position(x: 0, y: 0)
-        var tailPosition = Position(x: 0, y: 0)
-        var tailPositions = Set<Position>()
+        simulateRopeDrag(moves: moves, numberOfKnots: 2, dayPart: 1)
+        simulateRopeDrag(moves: moves, numberOfKnots: 10, dayPart: 2)
+    }
 
-        tailPositions.insert(tailPosition)
+    private func simulateRopeDrag(moves: [Move], numberOfKnots: Int, dayPart: Int) {
+        var lastKnot = Knot()
+        let knots = [lastKnot] + (1..<numberOfKnots).map { _ in
+            let knot = Knot(parent: lastKnot)
+            lastKnot = knot
+            return knot
+        }
+
+        var tailPositions = Set<Position>()
+        tailPositions.insert(lastKnot.position)
 
         for move in moves {
             for _ in (1...move.length) {
-                headPosition = headPosition.move(direction: move.direction)
-                if doesTailNeedToMove(head: headPosition, tail: tailPosition) {
-                    tailPosition = tailPosition.move(direction: move.direction, parent: headPosition)
-                    tailPositions.insert(tailPosition)
+                for knot in knots {
+                    knot.move(direction: move.direction)
+
+                    if knot == lastKnot {
+                        tailPositions.insert(lastKnot.position)
+                    }
                 }
             }
         }
 
-        printResult(dayPart: 1, message: "Number of positions tail has visited: \(tailPositions.count)")
-    }
-
-    private func doesTailNeedToMove(head: Position, tail: Position) -> Bool {
-        [head.x - tail.x, head.y - tail.y].contains { !(-1...1).contains($0) }
+        printResult(dayPart: dayPart, message: "Number of positions tail has visited: \(tailPositions.count)")
     }
 }
 
 private extension Year2022.Day9 {
     typealias Move = (direction: Direction, length: Int)
 
+    class Knot: Hashable {
+        var parent: Knot?
+        var position: Position
+
+        init(parent: Knot? = nil, position: Position = Position(x: 0, y: 0)) {
+            self.parent = parent
+            self.position = position
+        }
+
+        func move(direction: Direction) {
+            if let parentPosition = parent?.position {
+                let diffX = parentPosition.x - position.x
+                let diffY = parentPosition.y - position.y
+
+                if [diffY, diffX].contains(where: { !(-1...1).contains($0) }) {
+                    position = Position(
+                        x: position.x + diffX.clamp(min: -1, max: 1),
+                        y: position.y + diffY.clamp(min: -1, max: 1)
+                    )
+                }
+            } else {
+                switch direction {
+                case .up: position = Position(x: position.x, y: position.y - 1)
+                case .down: position = Position(x: position.x, y: position.y + 1)
+                case .left: position = Position(x: position.x - 1, y: position.y)
+                case .right: position = Position(x: position.x + 1, y: position.y)
+                }
+            }
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(parent)
+            hasher.combine(position)
+        }
+
+        static func ==(lhs: Knot, rhs: Knot) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+    }
+
     struct Position: Hashable {
         let x: Int
         let y: Int
-
-        func move(direction: Direction) -> Position {
-            switch direction {
-            case .up: return Position(x: x, y: y - 1)
-            case .down: return Position(x: x, y: y + 1)
-            case .left: return Position(x: x - 1, y: y)
-            case .right: return Position(x: x + 1, y: y)
-            }
-        }
-
-        func move(direction: Direction, parent: Position) -> Position {
-            switch direction {
-            case .up: return Position(x: parent.x, y: y - 1)
-            case .down: return Position(x: parent.x, y: y + 1)
-            case .left: return Position(x: x - 1, y: parent.y)
-            case .right: return Position(x: x + 1, y: parent.y)
-            }
-        }
     }
 
     enum Direction {
@@ -69,5 +98,11 @@ private extension Year2022.Day9 {
             default: fatalError("Direction not found for '\(value)'")
             }
         }
+    }
+}
+
+private extension Int {
+    func clamp(min: Int, max: Int) -> Int {
+        Swift.min(max, Swift.max(self, min))
     }
 }
