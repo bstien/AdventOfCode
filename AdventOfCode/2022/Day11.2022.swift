@@ -2,27 +2,31 @@ import Foundation
 
 extension Year2022.Day11: Runnable {
     func run(input: String) {
-        let monkeys = splitInput(input, separatedBy: "\n\n").map { splitInput($0) }.map(parseMonkey(lines:))
+        execute(input: input, iterations: 20, worryDivision: 3, dayPart: 1)
+        execute(input: input, iterations: 10_000, worryDivision: 1, dayPart: 2)
+    }
 
-        for _ in (0..<20) {
+    private func execute(input: String, iterations: Int, worryDivision: Int, dayPart: Int) {
+        let monkeys = splitInput(input, separatedBy: "\n\n").map { splitInput($0) }.map(parseMonkey(lines:))
+        let commonDivisionTest = monkeys.map(\.divisionTest).reduce(1, *)
+
+        for _ in (1...iterations) {
             for monkey in monkeys {
                 let items = monkey.items
                 monkey.items = []
 
                 monkey.inspections += items.count
                 for item in items {
-                    let worryLevel = monkey.operation.calculate(worryLevel: item) / 3
-                    if worryLevel % monkey.divisionTest == 0 {
-                        monkeys.first(where: { $0.id == monkey.divisionTestResult.isTrue })?.items.append(worryLevel)
-                    } else {
-                        monkeys.first(where: { $0.id == monkey.divisionTestResult.isFalse })?.items.append(worryLevel)
-                    }
+                    let worryLevel = monkey.operation.calculate(worryLevel: item) % commonDivisionTest / worryDivision
+
+                    let nextMonkeyId = worryLevel % monkey.divisionTest == 0 ? monkey.divisionTestResult.isTrue : monkey.divisionTestResult.isFalse
+                    monkeys.first(where: { $0.id == nextMonkeyId })?.items.append(worryLevel)
                 }
             }
         }
 
-        let topInspections = monkeys.map(\.inspections).sorted(by: { $0 > $1 }).prefix(2).reduce(1, *)
-        printResult(dayPart: 1, message: "Product of top two inspection monkeys: \(topInspections)")
+        let topInspections = monkeys.map(\.inspections).sorted().suffix(2).reduce(1, *)
+        printResult(dayPart: dayPart, message: "Product of top two inspection monkeys: \(topInspections)")
     }
 
     private func parseMonkey(lines: [String]) -> Monkey {
