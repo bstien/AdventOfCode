@@ -4,25 +4,34 @@ extension Year2022.Day12: Runnable {
     func run(input: String) {
         var mountain = splitInput(input).map { Array($0) }
 
-        let startPoint = mountain.findPosition(of: "S")
-        let endPoint = mountain.findPosition(of: "E")
+        let partOneStartPoint = mountain.findPositions(of: "S").first!
+        let endPoint = mountain.findPositions(of: "E").first!
 
         mountain = mountain.map { line in
-            line.map {
-                if $0 == "S" { return "a" }
-                if $0 == "E" { return "z" }
-                return $0
+            line.map { character -> Character in
+                if character == "S" { return "a" }
+                if character == "E" { return "z" }
+                return character
             }
         }
 
-        let shortestRoute = exploreRoutes(from: startPoint, destination: endPoint, mountain: mountain).count - 1
-        printResult(dayPart: 1, message: "Shortest route: \(shortestRoute)")
+        let part1 = exploreRoutes(from: partOneStartPoint, destinations: [endPoint], mountain: mountain, canMove: {
+            mountain.elevationIndex(for: $1) <= mountain.elevationIndex(for: $0) + 1
+        })
+        printResult(dayPart: 1, message: "Shortest route: \(part1.count - 1)")
+
+        let partTwoStartPoints = mountain.findPositions(of: "a")
+        let part2 = exploreRoutes(from: endPoint, destinations: partTwoStartPoints, mountain: mountain, canMove: {
+            mountain.elevationIndex(for: $1) >= mountain.elevationIndex(for: $0) - 1
+        })
+        printResult(dayPart: 2, message: "Shortest route: \(part2.count - 1)")
     }
 
     private func exploreRoutes(
         from position: Position,
-        destination: Position,
-        mountain: Mountain
+        destinations: [Position],
+        mountain: Mountain,
+        canMove: (_ from: Position, _ to: Position) -> Bool
     ) -> [Position] {
         var queue = [position]
         var parentMap = [Position: Position]()
@@ -30,19 +39,18 @@ extension Year2022.Day12: Runnable {
 
         while (!queue.isEmpty) {
             let currentPosition = queue.removeFirst()
-            let currentElevationIndex = mountain.elevationIndex(for: currentPosition)
 
-            if currentPosition == destination {
+            if destinations.contains(currentPosition) {
                 return route(from: currentPosition, parentMap: parentMap)
             }
 
             mountain.neighbors(for: currentPosition)
                 .filter {
-                    !parentMap.keys.contains($0) && mountain.elevationIndex(for: $0) <= currentElevationIndex + 1
+                    !parentMap.keys.contains($0) && canMove(currentPosition, $0)
                 }
-                .forEach { neighbor in
-                    queue.append(neighbor)
-                    parentMap[neighbor] = currentPosition
+                .forEach {
+                    queue.append($0)
+                    parentMap[$0] = currentPosition
                 }
         }
 
@@ -99,15 +107,15 @@ private extension Year2022.Day12.Mountain {
         }
     }
 
-    func findPosition(of character: Character) -> Year2022.Day12.Position {
-        guard
-            let yPos = firstIndex(where: { $0.contains(character) }),
-            let xPos = self[yPos].firstIndex(of: character)
-        else {
-            fatalError("Could not find character: '\(character)'")
+    func findPositions(of toFind: Character) -> [Year2022.Day12.Position] {
+        enumerated().flatMap { y, row in
+            row.enumerated().compactMap { x, character in
+                if character == toFind {
+                    return Year2022.Day12.Position(x: x, y: y)
+                }
+                return nil
+            }
         }
-
-        return .init(x: xPos, y: yPos)
     }
 
     func printGrid(visited: [Year2022.Day12.Position]) {
