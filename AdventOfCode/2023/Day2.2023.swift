@@ -5,6 +5,7 @@ extension Year2023.Day2: Runnable {
         let lines = splitInput(input)
         let games = parseGames(lines: lines)
         part1(games: games)
+        part2(games: games)
     }
 
     private func part1(games: [Game]) {
@@ -18,6 +19,22 @@ extension Year2023.Day2: Runnable {
 
         let gameIdSum = possibleGames.map(\.id).reduce(0, +)
         printResult(dayPart: 1, message: "Total: \(gameIdSum)")
+    }
+
+    private func part2(games: [Game]) {
+        let cubePower = games.map { game in
+            guard
+                let maxRed = game.cubeSets.max(by: { $0.red < $1.red })?.red,
+                let maxGreen = game.cubeSets.max(by: { $0.green < $1.green })?.green,
+                let maxBlue = game.cubeSets.max(by: { $0.blue < $1.blue })?.blue
+            else {
+                fatalError("Could not get max color count from CubeSet")
+            }
+
+            return maxRed * maxGreen * maxBlue
+        }.reduce(0, +)
+
+        printResult(dayPart: 2, message: "Cube power: \(cubePower)")
     }
 
     private func parseGames(lines: [String]) -> [Game] {
