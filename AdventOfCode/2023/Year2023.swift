@@ -5,6 +5,7 @@ enum Year2023: Year {
     static var days: [Day.Type] = [
         Day1.self,
         Day2.self,
+        Day3.self,
     ]
 }
 
