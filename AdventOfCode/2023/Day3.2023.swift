@@ -8,6 +8,7 @@ extension Year2023.Day3: Runnable {
         let schematic = parseSchematic(grid: grid)
 
         part1(schematic: schematic)
+        part2(schematic: schematic, grid: grid)
     }
 
     private func part1(schematic: Schematic) {
@@ -28,6 +29,43 @@ extension Year2023.Day3: Runnable {
 
         let partSum = validParts.reduce(0, { $0 + $1.value })
         printResult(dayPart: 1, message: "Part sum: \(partSum)")
+    }
+
+    private func part2(schematic: Schematic, grid: [String]) {
+        let gearRatios = schematic.symbolLocations.compactMap { symbolLocation -> Int? in
+            guard grid[symbolLocation.y][symbolLocation.x] == "*" else { return nil }
+            
+            var adjacentPartNumbers = Set<PartNumber>()
+
+            for y in (-1...1) {
+                let absoluteY = symbolLocation.y + y
+                if absoluteY < 0 { continue }
+
+                let potentialPartNumbers = schematic.partNumbers.filter { $0.location.y == absoluteY }
+
+                for x in (-1...1) {
+                    let absoluteX = symbolLocation.x + x
+                    if (y == 0 && x == 0) || absoluteX < 0 {
+                        continue
+                    }
+
+                    potentialPartNumbers.forEach {
+                        if $0.locationRange.contains(absoluteX) {
+                            adjacentPartNumbers.insert($0)
+                        }
+                    }
+                }
+
+                // Early return, if we have more than we need.
+                if adjacentPartNumbers.count > 2 { return nil }
+            }
+
+            guard adjacentPartNumbers.count == 2 else { return nil }
+
+            return adjacentPartNumbers.map(\.value).reduce(1, *)
+        }.reduce(0, +)
+
+        printResult(dayPart: 2, message: "Gear ratio total: \(gearRatios)")
     }
 
     private func parseSchematic(grid: [String]) -> Schematic {
@@ -89,8 +127,12 @@ private struct Schematic {
     let partNumbers: [PartNumber]
 }
 
-private struct PartNumber {
+private struct PartNumber: Hashable {
     let value: Int
     let location: Location
     let length: Int
+
+    var locationRange: ClosedRange<Int> {
+        location.x...location.x + (length - 1)
+    }
 }
