@@ -37,23 +37,18 @@ extension Year2023.Day4: Runnable {
     private func parseCards(lines: [String]) -> [Card] {
         lines.map { line in
             let components = splitInput(line, separatedBy: ":")
-
-            guard let cardId = splitInput(components[0], separatedBy: " ")[1].toInt else {
-                fatalError("Could not parse cardId: '\(components[0])'")
-            }
-
             let numberSections = splitInput(components[1], separatedBy: "|")
 
-            let winningNumbers = splitInput(numberSections[0], separatedBy: " ").compactMap { $0.toInt }
-            let yourNumbers = splitInput(numberSections[1], separatedBy: " ").compactMap { $0.toInt }
+            let numbers = numberSections.map {
+                Set(splitInput($0, separatedBy: " ").compactMap { $0.toInt })
+            }
 
-            return Card(id: cardId, winningNumbers: Set(winningNumbers), yourNumbers: Set(yourNumbers))
+            return Card(winningNumbers: numbers[0], yourNumbers: numbers[1])
         }
     }
 }
 
 private struct Card {
-    let id: Int
     let winningNumbers: Set<Int>
     let yourNumbers: Set<Int>
 }
