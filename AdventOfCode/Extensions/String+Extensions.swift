@@ -7,6 +7,10 @@ extension StringProtocol {
 }
 
 extension String {
+    var toInt: Int? {
+        Int(self)
+    }
+
     subscript(offset: Int) -> String {
         String(characterAt(offset))
     }
