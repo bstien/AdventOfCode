@@ -5,6 +5,7 @@ extension Year2023.Day4: Runnable {
         let lines = splitInput(input)
         let cards = parseCards(lines: lines)
         part1(cards: cards)
+        part2(cards: cards)
     }
 
     private func part1(cards: [Card]) {
@@ -14,6 +15,23 @@ extension Year2023.Day4: Runnable {
         }.reduce(0, +)
 
         printResult(dayPart: 1, message: "Total: \(total)")
+    }
+
+    private func part2(cards: [Card]) {
+        var cardWinnings = (0..<cards.count).reduce(into: [Int: Int](), { $0[$1] = 1})
+        
+        cards.enumerated().forEach { index, card in
+            let newCardsWon = card.winningNumbers.intersection(card.yourNumbers).count
+
+            if newCardsWon == 0 { return }
+
+            for i in (1...newCardsWon) {
+                cardWinnings[index + i, default: 1] += 1 * cardWinnings[index, default: 1]
+            }
+        }
+
+        let totalCardsWon = cardWinnings.values.reduce(0, +)
+        printResult(dayPart: 2, message: "Total: \(totalCardsWon)")
     }
 
     private func parseCards(lines: [String]) -> [Card] {
