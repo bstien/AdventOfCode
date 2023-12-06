@@ -2,24 +2,20 @@ import Foundation
 
 extension Year2023.Day5: Runnable {
     func run(input: String) {
-        let seeds = parseSeeds(input: input)
         let sections = parseSections(input: input)
+
+        let seeds = parseSeeds(input: input)
         part1(seeds: seeds, sections: sections)
+
+        let seedRanges = createSeedRanges(seeds: seeds)
+        part2(seedRanges: seedRanges, sections: sections)
     }
 
     private func part1(seeds: [Int], sections: [Section]) {
         var minLocation = Int.max
 
         for seed in seeds {
-            var location = seed
-            for section in sections {
-                for map in section.maps {
-                    if map.sourceRange.contains(location) {
-                        location = map.destinationStart + (location - map.sourceStart)
-                        break
-                    }
-                }
-            }
+            let location = getEndLocation(seed: seed, sections: sections)
 
             if location < minLocation {
                 minLocation = location
@@ -29,9 +25,55 @@ extension Year2023.Day5: Runnable {
         printResult(dayPart: 1, message: "Min location: \(minLocation)")
     }
 
+    private func part2(seedRanges: [SeedRange], sections: [Section]) {
+        var minLocation = Int.max
+        let sectionsReversed = Array(sections.reversed())
+
+        for endLocation in (0 ... Int.max) {
+            var location = endLocation
+
+            for section in sectionsReversed {
+                for map in section.maps {
+                    if map.destinationRange.contains(location) {
+                        location = map.sourceStart + (location - map.destinationStart)
+                        break
+                    }
+                }
+            }
+
+            if seedRanges.contains(where: { $0.contains(location) }) {
+                minLocation = endLocation
+                break
+            }
+        }
+
+        printResult(dayPart: 2, message: "Min location: \(minLocation)")
+    }
+
+    private func getEndLocation(seed: Int, sections: [Section]) -> Int {
+        var location = seed
+        for section in sections {
+            for map in section.maps {
+                if map.sourceRange.contains(location) {
+                    location = map.destinationStart + (location - map.sourceStart)
+                    break
+                }
+            }
+        }
+
+        return location
+    }
+
     private func parseSeeds(input: String) -> [Int] {
         let firstLine = splitInput(input)[0]
         return splitInput(firstLine, separatedBy: " ").compactMap(\.toInt)
+    }
+
+    private func createSeedRanges(seeds: [Int]) -> [SeedRange] {
+        seeds.chunks(ofCount: 2).map {
+            // God damn array slices.
+            ($0[$0.startIndex] ... $0[$0.startIndex] + ($0[$0.endIndex - 1] - 1))
+        }
     }
 
     private func parseSections(input: String) -> [Section] {
@@ -48,22 +90,22 @@ extension Year2023.Day5: Runnable {
     }
 }
 
+private typealias SeedRange = ClosedRange<Int>
+
 private struct Section {
     let maps: [Map]
 }
 
 private struct Map {
-    let destinationRange: ClosedRange<Int>
-    let sourceRange: ClosedRange<Int>
     let destinationStart: Int
+    let destinationRange: ClosedRange<Int>
     let sourceStart: Int
-    let rangeLength: Int
+    let sourceRange: ClosedRange<Int>
 
     init(destinationStart: Int, sourceStart: Int, rangeLength: Int) {
         self.destinationStart = destinationStart
-        self.sourceStart = sourceStart
-        self.rangeLength = rangeLength
         self.destinationRange = (destinationStart...destinationStart+(rangeLength - 1))
+        self.sourceStart = sourceStart
         self.sourceRange = (sourceStart...sourceStart+(rangeLength - 1))
     }
 }
