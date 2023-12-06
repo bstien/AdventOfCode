@@ -8,7 +8,7 @@ enum Year2023: Year {
         Day3.self,
         Day4.self,
         Day5.self,
-        Day6.self,
+//        Day6.self,
     ]
 }
 
