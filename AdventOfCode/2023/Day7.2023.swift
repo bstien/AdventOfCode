@@ -8,43 +8,30 @@ extension Year2023.Day7: Runnable {
     }
 
     private func part1(hands: [Hand]) {
-        let sorted = hands.sorted(by: {
-            if $0.kind.rawValue > $1.kind.rawValue { return false }
-            if $0.kind.rawValue < $1.kind.rawValue { return true }
-
-            for pair in zip($0.hand, $1.hand) {
-                if pair.0 == pair.1 { continue }
-                return pair.0.rawValue < pair.1.rawValue
-            }
-
-            return true
-        })
-
-        let winnings = sorted.enumerated().reduce(0, { sum, tuple in
-            sum + (tuple.element.bet * (tuple.offset + 1))
-        })
-
+        let winnings = calculateWinnings(hands: hands,handValue: \.kind.rawValue,cardValue: \.rawValue)
         printResult(dayPart: 1, message: "Winnings: \(winnings)")
     }
 
     private func part2(hands: [Hand]) {
-        let sorted = hands.sorted(by: {
-            if $0.improvedKind.rawValue > $1.improvedKind.rawValue { return false }
-            if $0.improvedKind.rawValue < $1.improvedKind.rawValue { return true }
+        let winnings = calculateWinnings(hands: hands,handValue: \.improvedKind.rawValue,cardValue: \.partTwoValue)
+        printResult(dayPart: 2, message: "Winnings: \(winnings)")
+    }
 
-            for pair in zip($0.hand, $1.hand) {
-                if pair.0 == pair.1 { continue }
-                return pair.0.partTwoValue < pair.1.partTwoValue
+    private func calculateWinnings(hands: [Hand], handValue: KeyPath<Hand, Int>, cardValue: KeyPath<Card, Int>) -> Int {
+        let sortedHands = hands.sorted(by: {
+            if $0[keyPath: handValue] == $1[keyPath: handValue] {
+                for pair in zip($0.hand, $1.hand) {
+                    if pair.0 == pair.1 { continue }
+                    return pair.0[keyPath: cardValue] < pair.1[keyPath: cardValue]
+                }
             }
 
-            return true
+            return $0[keyPath: handValue] > $1[keyPath: handValue]
         })
 
-        let winnings = sorted.enumerated().reduce(0, { sum, tuple in
+        return sortedHands.enumerated().reduce(0, { sum, tuple in
             sum + (tuple.element.bet * (tuple.offset + 1))
         })
-
-        printResult(dayPart: 2, message: "Winnings: \(winnings)")
     }
 
     private func parseHands(input: String) -> [Hand] {
@@ -69,7 +56,9 @@ extension Year2023.Day7: Runnable {
             self.kind = Self.parseHandKind(hand: hand)
             self.hand = hand.compactMap(Card.init(character:))
             self.bet = bet
-            self.improvedKind = Self.improveWithJokers(hand: self.hand, currentKind: self.kind)
+
+            let jokerCount = self.hand.filter { $0 == .jack }.count
+            self.improvedKind = Self.improveWithJokers(jokerCount: jokerCount, currentKind: kind)
         }
 
         private static func parseHandKind(hand: String) -> HandKind {
@@ -86,11 +75,7 @@ extension Year2023.Day7: Runnable {
             return values.filter { $0 == 2 }.count == 2 ? .twoPair : .onePair
         }
 
-        private static func improveWithJokers(hand: [Card], currentKind: HandKind) -> HandKind {
-            let grouped = hand.grouped(by: { $0 }).mapValues(\.count)
-
-            let jokerCount = grouped[.jack, default: 0]
-
+        private static func improveWithJokers(jokerCount: Int, currentKind: HandKind) -> HandKind {
             if jokerCount == 0 { return currentKind }
 
             switch currentKind {
