@@ -8,12 +8,20 @@ extension Year2023.Day7: Runnable {
     }
 
     private func part1(hands: [Hand]) {
-        let winnings = calculateWinnings(hands: hands,handValue: \.kind.rawValue,cardValue: \.rawValue)
+        let winnings = calculateWinnings(
+            hands: hands,
+            handValue: \.kind.rawValue,
+            cardValue: \.rawValue
+        )
         printResult(dayPart: 1, message: "Winnings: \(winnings)")
     }
 
     private func part2(hands: [Hand]) {
-        let winnings = calculateWinnings(hands: hands,handValue: \.improvedKind.rawValue,cardValue: \.partTwoValue)
+        let winnings = calculateWinnings(
+            hands: hands,
+            handValue: \.improvedKind.rawValue,
+            cardValue: \.partTwoValue
+        )
         printResult(dayPart: 2, message: "Winnings: \(winnings)")
     }
 
