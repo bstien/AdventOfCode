@@ -19,7 +19,7 @@ extension Year2023.Day8: Runnable {
     private func part2(instructions: [Instruction], nodes: [Node]) {
         let steps = nodes.filter { $0.id.last == "A" }
             .map { traverse(nodes: nodes, startNode: $0, instructions: instructions, shouldStop: { $0.id.last == "Z" }) }
-            .reduce(1, { ($0 * $1) / Int.gcd($0, $1) })
+            .reduce(1, { Int.lcd($0, $1) })
 
         printResult(dayPart: 2, message: "Number of steps: \(steps)")
     }
