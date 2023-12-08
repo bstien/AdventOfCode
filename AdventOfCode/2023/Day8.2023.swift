@@ -4,7 +4,9 @@ extension Year2023.Day8: Runnable {
     func run(input: String) {
         let instructions = parseInstructions(input: input)
         let nodes = parseNetwork(input: input)
+        
         part1(instructions: instructions, nodes: nodes)
+        part2(instructions: instructions, nodes: nodes)
     }
 
     private func part1(instructions: [Instruction], nodes: [Node]) {
@@ -32,6 +34,38 @@ extension Year2023.Day8: Runnable {
         printResult(dayPart: 1, message: "Number of steps: \(steps)")
     }
 
+    private func part2(instructions: [Instruction], nodes: [Node]) {
+        let idToIndexMap = nodes.enumerated().reduce(into: [String: Int](), { $0[$1.element.id] = $1.offset })
+
+        func findFirstZ(startIndex: Int) -> Int {
+            var steps = 0
+
+            var currentNodeIndex = startIndex
+            while(true) {
+                let node = nodes[currentNodeIndex]
+                if node.id.last == "Z" { break }
+                
+                let nextNodeId = instructions[steps % instructions.count] == .l ? node.leftId : node.rightId
+                guard let nextNodeIndex = idToIndexMap[nextNodeId] else {
+                    fatalError("No node index found for id '\(nextNodeId)'")
+                }
+
+                currentNodeIndex = nextNodeIndex
+                steps += 1
+            }
+
+            return steps
+        }
+
+        let startIndices = idToIndexMap.compactMap { $0.key.last == "A" ? $0.value : nil }
+        let steps = startIndices
+            .map(findFirstZ(startIndex:))
+            .reduce(1, { ($0 * $1) / Int.gcd($0, $1) })
+
+
+        printResult(dayPart: 2, message: "Number of steps: \(steps)")
+    }
+
     private func parseInstructions(input: String) -> [Instruction] {
         guard let firstLine = splitInput(input).first else { fatalError() }
         return firstLine.compactMap(Instruction.init(rawValue:))
@@ -42,7 +76,7 @@ extension Year2023.Day8: Runnable {
 
         return lines.map { line in
             let components = splitInput(line, separatedBy: " = ")
-            let nodeMap = splitInput(components[1], separatedBy: ", ").map { $0.trimmingCharacters(in: .letters.inverted) }
+            let nodeMap = splitInput(components[1], separatedBy: ", ").map { $0.trimmingCharacters(in: .alphanumerics.inverted) }
             return Node(id: components[0], leftId: nodeMap[0], rightId: nodeMap[1])
         }
     }
