@@ -4,6 +4,7 @@ extension Year2023.Day9: Runnable {
     func run(input: String) {
         let numbers = parse(input: input)
         part1(numbers: numbers)
+        part2(numbers: numbers)
     }
 
     private func part1(numbers: [[Int]]) {
@@ -15,12 +16,33 @@ extension Year2023.Day9: Runnable {
         printResult(dayPart: 1, message: "Total: \(total)")
     }
 
+    private func part2(numbers: [[Int]]) {
+        let total = numbers
+            .map { findDifferences(line: $0) }
+            .map { findPreviousValue(differences: $0) }
+            .sum
+
+        printResult(dayPart: 2, message: "Total: \(total)")
+    }
+
     private func findNextValue(differences: [[Int]]) -> Int {
         var index = differences.count - 1
         var nextValue = 0
 
         while index > 0 {
             nextValue = nextValue + differences[index - 1].last!
+            index -= 1
+        }
+
+        return nextValue
+    }
+
+    private func findPreviousValue(differences: [[Int]]) -> Int {
+        var index = differences.count - 1
+        var nextValue = 0
+
+        while index > 0 {
+            nextValue = differences[index - 1].first! - nextValue
             index -= 1
         }
 
