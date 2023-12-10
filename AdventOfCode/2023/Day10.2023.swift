@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 private typealias Grid = [[Tile]]
 
@@ -6,28 +7,49 @@ extension Year2023.Day10: Runnable {
     func run(input: String) {
         let grid = splitInput(input).map { $0.compactMap(Tile.init(rawValue:)) }
         part1(grid: grid)
+        part2(grid: grid)
     }
 
     private func part1(grid: Grid) {
-        let loopPositions = findLoop(grid: grid)
-        printResult(dayPart: 1, message: "Animal is at step: \(loopPositions.count / 2)")
+        let loop = findLoop(grid: grid)
+        printResult(dayPart: 1, message: "Animal is at step: \(loop.points.count / 2)")
     }
 
-    private func findLoop(grid: Grid) -> Set<Position> {
+    private func part2(grid: Grid) {
+        let loop = findLoop(grid: grid)
+        var tilesWithinLoop = 0
+
+        for yPos in 0 ..< grid.count {
+            for xPos in 0 ..< grid[yPos].count {
+                guard !loop.points.contains(Position(y: yPos, x: xPos)) else { continue }
+
+                if loop.path.contains(NSPoint(x: xPos, y: yPos)) {
+                    tilesWithinLoop += 1
+                }
+            }
+        }
+
+        printResult(dayPart: 2, message: "# of tiles within loop: \(tilesWithinLoop)")
+    }
+
+    private func findLoop(grid: Grid) -> Loop {
         guard let startPosition = grid.startPosition else { fatalError() }
 
         for startDirection in Direction.allCases {
-            var loopPositions = Set<Position>()
-            
+            let loop = Loop()
+
             var dir = startDirection
             var pos = startPosition + startDirection.travelVector
-            
+
+            loop.path.move(to: NSPoint(x: startPosition.x, y: startPosition.y))
+
             guard grid.contains(pos) else { continue }
 
             while true {
-                loopPositions.insert(pos)
+                loop.add(pos)
+
                 let tile = grid[pos.y][pos.x]
-                if tile == .start { return loopPositions }
+                if tile == .start { return loop }
 
                 guard let nextDir = nextDirection(tile: tile, direction: dir) else { break }
                 dir = nextDir
@@ -67,6 +89,21 @@ extension Year2023.Day10: Runnable {
 
             return nil
         }
+    }
+}
+
+private class Loop {
+    var points: Set<Position>
+    let path: NSBezierPath
+
+    init() {
+        points = []
+        path = NSBezierPath()
+    }
+
+    func add(_ position: Position) {
+        points.insert(position)
+        path.line(to: NSPoint(x: position.x, y: position.y))
     }
 }
 
