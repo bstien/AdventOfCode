@@ -6,17 +6,17 @@ private typealias Grid = [[Tile]]
 extension Year2023.Day10: Runnable {
     func run(input: String) {
         let grid = splitInput(input).map { $0.compactMap(Tile.init(rawValue:)) }
-        part1(grid: grid)
-        part2(grid: grid)
+        let loop = findLoop(grid: grid)
+
+        part1(loop: loop)
+        part2(loop: loop, grid: grid)
     }
 
-    private func part1(grid: Grid) {
-        let loop = findLoop(grid: grid)
+    private func part1(loop: Loop) {
         printResult(dayPart: 1, message: "Animal is at step: \(loop.points.count / 2)")
     }
 
-    private func part2(grid: Grid) {
-        let loop = findLoop(grid: grid)
+    private func part2(loop: Loop, grid: Grid) {
         var tilesWithinLoop = 0
 
         for yPos in 0 ..< grid.count {
@@ -36,14 +36,9 @@ extension Year2023.Day10: Runnable {
         guard let startPosition = grid.startPosition else { fatalError() }
 
         for startDirection in Direction.allCases {
-            let loop = Loop()
-
             var dir = startDirection
             var pos = startPosition + startDirection.travelVector
-
-            loop.path.move(to: NSPoint(x: startPosition.x, y: startPosition.y))
-
-            guard grid.contains(pos) else { continue }
+            let loop = Loop(startPosition: startPosition)
 
             while true {
                 loop.add(pos)
@@ -61,33 +56,26 @@ extension Year2023.Day10: Runnable {
     }
 
     private func nextDirection(tile: Tile, direction: Direction) -> Direction? {
-        if tile == .start { return direction }
+        switch (direction, tile) {
+        case (_, .start): direction
+        
+        case (.north, .northSouthPipe): direction
+        case (.north, .southEastBend): .east
+        case (.north, .southWestBend): .west
 
-        switch direction {
-        case .north:
-            if tile == .northSouthPipe { return direction }
-            if tile == .southEastBend { return .east }
-            if tile == .southWestBend { return .west }
+        case (.east, .eastWestPipe): direction
+        case (.east, .northWestBend): .north
+        case (.east, .southWestBend): .south
 
-            return nil
-        case .east:
-            if tile == .eastWestPipe { return direction }
-            if tile == .northWestBend { return .north }
-            if tile == .southWestBend { return .south }
+        case (.west, .eastWestPipe): direction
+        case (.west, .northEastBend): .north
+        case (.west, .southEastBend): .south
 
-            return nil
-        case .west:
-            if tile == .eastWestPipe { return direction }
-            if tile == .northEastBend { return .north }
-            if tile == .southEastBend { return .south }
+        case (.south, .northSouthPipe): direction
+        case (.south, .northEastBend): .east
+        case (.south, .northWestBend): .west
 
-            return nil
-        case .south:
-            if tile == .northSouthPipe { return direction }
-            if tile == .northEastBend { return .east }
-            if tile == .northWestBend { return .west }
-
-            return nil
+        default: nil
         }
     }
 }
@@ -96,20 +84,22 @@ private class Loop {
     var points: Set<Position>
     let path: NSBezierPath
 
-    init() {
+    init(startPosition: Position) {
         points = []
         path = NSBezierPath()
+        path.move(to: startPosition.toPoint)
     }
 
     func add(_ position: Position) {
         points.insert(position)
-        path.line(to: NSPoint(x: position.x, y: position.y))
+        path.line(to: position.toPoint)
     }
 }
 
 private struct Position: Hashable {
     let y: Int
     let x: Int
+    var toPoint: NSPoint { NSPoint(x: x, y: y) }
 
     static func +(lhs: Position, rhs: Position) -> Position {
         Position(y: lhs.y + rhs.y, x: lhs.x + rhs.x)
@@ -154,9 +144,5 @@ private extension Grid {
         }
 
         return nil
-    }
-
-    func contains(_ position: Position) -> Bool {
-        indices.contains(position.y) && self[position.y].indices.contains(position.x)
     }
 }
