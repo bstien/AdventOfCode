@@ -18,14 +18,14 @@ extension Year2023.Day11: Runnable {
     }
 
     private func calculateDistances(universe: Universe, emptyValue: Int) -> Int {
-        var galaxiesMatched = [Galaxy: Set<Galaxy>]()
         var totalDistance = 0
+        var galaxiesSeen = Set<Galaxy>()
 
         for this in universe.galaxies {
-            var matched = Set<Galaxy>()
+            galaxiesSeen.insert(this)
+
             for other in universe.galaxies {
-                if this == other || galaxiesMatched[other]?.contains(this) == true { continue }
-                matched.insert(other)
+                if this == other || galaxiesSeen.contains(other) == true { continue }
 
                 let colRange = min(this.x, other.x)...max(this.x, other.x)
                 let rowRange = min(this.y, other.y)...max(this.y, other.y)
@@ -38,8 +38,6 @@ extension Year2023.Day11: Runnable {
 
                 totalDistance += distanceX + distanceY + extraRows + extraCols
             }
-
-            galaxiesMatched[this] = matched
         }
 
         return totalDistance
@@ -59,15 +57,13 @@ extension Year2023.Day11: Runnable {
         }
 
         for y in 0..<lines.count {
-            if universe.galaxies.allSatisfy({ $0.y != y }) {
-                universe.emptyRows.insert(y)
-            }
+            if universe.galaxies.contains(where: { $0.y == y }) { continue }
+            universe.emptyRows.insert(y)
         }
 
         for x in 0..<lines[0].count {
-            if universe.galaxies.allSatisfy({ $0.x != x }) {
-                universe.emptyCols.insert(x)
-            }
+            if universe.galaxies.contains(where: { $0.x == x }) { continue }
+            universe.emptyCols.insert(x)
         }
         
         return universe
