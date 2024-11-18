@@ -58,7 +58,7 @@ extension Day {
             fatalError("\(self) is not Runnable!")
         }
 
-        let filename = "\(year)/\(year).\(day)" + (isTest ? ".test" : "") + ".txt"
+        let filename = "\(year)/\(day)" + (isTest ? ".test" : "") + ".txt"
         guard let input = try? Input.get(filename) else {
             fatalError("Could not open input file \(filename)")
         }
