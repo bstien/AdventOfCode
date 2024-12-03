@@ -24,5 +24,38 @@ extension Year2024.Day3: Runnable {
     }
 
     private func part2(input: String) {
+        let regex = Regex {
+            ChoiceOf {
+                "don't()"
+                "do()"
+                Local {
+                    "mul("
+                    TryCapture({ OneOrMore(.digit) }, transform: { Int($0) ?? 0 })
+                    ","
+                    TryCapture({ OneOrMore(.digit) }, transform: { Int($0) ?? 0 })
+                    ")"
+                }
+            }
+        }
+
+        var isEnabled = true
+        var sum = 0
+        let matchOutput = input
+            .matches(of: regex)
+            .map(\.output)
+
+        for output in matchOutput {
+            switch output.0 {
+            case "don't()":
+                isEnabled = false
+            case "do()":
+                isEnabled = true
+            default:
+                guard isEnabled, let lhs = output.1, let rhs = output.2 else { continue }
+                sum += (lhs * rhs)
+            }
+        }
+
+        printResult(dayPart: 2, message: "Sum: \(sum)")
     }
 }
