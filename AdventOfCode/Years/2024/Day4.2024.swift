@@ -4,6 +4,7 @@ extension Year2024.Day4: Runnable {
     func run(input: String) {
         let grid = splitInput(input).map { Array($0) }
         part1(grid: grid)
+        part2(grid: grid)
     }
 
     private func part1(grid: [[Character]]) {
@@ -19,6 +20,41 @@ extension Year2024.Day4: Runnable {
         printResult(dayPart: 1, message: "Count: \(count)")
     }
 
+    private func part2(grid: [[Character]]) {
+        let aPositions: [Position] = grid.enumerated().flatMap { yPos, line in
+            line.enumerated().filter { $0.element == "A" }.map { Position(y: yPos, x: $0.offset) }
+        }
+
+        let count = aPositions.filter { position in
+            let diagonal1 = Set([grid.get(position + .northEast), grid.get(position + .southWest)].compactMap { $0 })
+            let diagonal2 = Set([grid.get(position + .northWest), grid.get(position + .southEast)].compactMap { $0 })
+            let combined = diagonal1.union(diagonal2)
+
+            guard
+                diagonal1.count == 2,
+                diagonal2.count == 2,
+                combined.count == 2,
+                combined.contains("M"),
+                combined.contains("S")
+            else { return false }
+
+            return true
+        }.count
+
+        printResult(dayPart: 2, message: "Count: \(count)")
+    }
+
+    private func search(
+        from position: Position,
+        in grid: [[Character]],
+        needle: [Character],
+        direction: Direction,
+        index: Int
+    ) -> Bool {
+        if index == needle.count { return true }
+        guard needle[index] == grid.get(position) else { return false }
+        return search(from: position + direction, in: grid, needle: needle, direction: direction, index: index + 1)
+    }
 }
 
 private extension [[Character]] {
