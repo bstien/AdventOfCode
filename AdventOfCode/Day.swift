@@ -54,10 +54,6 @@ extension Day {
     // MARK: - Private methods
 
     private func solveAndPrint(isTest: Bool = false) {
-        guard let selfRunnable = self as? Runnable else {
-            fatalError("\(self) is not Runnable!")
-        }
-
         let filename = "\(year)/\(day)" + (isTest ? ".test" : "") + ".txt"
         guard let input = try? Input.get(filename) else {
             fatalError("Could not open input file \(filename)")
@@ -66,9 +62,22 @@ extension Day {
         let titlePrefix = isTest ? "Running test" : "Solving"
         print("\(titlePrefix) – Day \(day) (\(year))")
 
-        let start = CACurrentMediaTime()
-        selfRunnable.run(input: input)
-        let end = CACurrentMediaTime()
+        let start: CFTimeInterval
+        let end: CFTimeInterval
+
+        switch self {
+        case let runnable as Runnable:
+            start = CACurrentMediaTime()
+            runnable.run(input: input)
+            end = CACurrentMediaTime()
+        case let asyncRunnable as AsyncRunnable:
+            start = CACurrentMediaTime()
+            Task.synchronous { await asyncRunnable.run(input: input) }
+            end = CACurrentMediaTime()
+        default:
+            fatalError("\(self) is neither `Runnable` nor `AsyncRunnable`!")
+        }
+
 
         let elapsed = end - start
         print("""
