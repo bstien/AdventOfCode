@@ -8,38 +8,33 @@ extension Year2024.Day4: Runnable {
     }
 
     private func part1(grid: [[Character]]) {
-        let xPositions: [Position] = grid.enumerated().flatMap { yPos, line in
-            line.enumerated().filter { $0.element == "X" }.map { Position(y: yPos, x: $0.offset) }
+        let needle = Array("XMAS")
+        let xPositions = grid.enumerated().flatMap { $1.positions(of: "X", yPos: $0) }
+        var count = 0
+
+        xPositions.forEach { position in
+            Direction.allCases.forEach { direction in
+                if search(from: position + direction, in: grid, needle: needle, direction: direction, index: 1) {
+                    count += 1
+                }
+            }
         }
 
-        let count = xPositions.reduce(0) { count, position in
-            count + Direction.allCases.filter {
-                search(from: position + $0, in: grid, needle: Array("XMAS"), direction: $0, index: 1)
-            }.count
-        }
         printResult(dayPart: 1, message: "Count: \(count)")
     }
 
     private func part2(grid: [[Character]]) {
-        let aPositions: [Position] = grid.enumerated().flatMap { yPos, line in
-            line.enumerated().filter { $0.element == "A" }.map { Position(y: yPos, x: $0.offset) }
+        let aPositions = grid.enumerated().flatMap { $1.positions(of: "A", yPos: $0) }
+        var count = 0
+
+        aPositions.forEach { position in
+            let diagonal1 = [grid.get(position + .northEast), grid.get(position + .southWest)]
+            let diagonal2 = [grid.get(position + .northWest), grid.get(position + .southEast)]
+
+            if Set(diagonal1) == ["M", "S"], Set(diagonal2) == ["M", "S"] {
+                count += 1
+            }
         }
-
-        let count = aPositions.filter { position in
-            let diagonal1 = Set([grid.get(position + .northEast), grid.get(position + .southWest)].compactMap { $0 })
-            let diagonal2 = Set([grid.get(position + .northWest), grid.get(position + .southEast)].compactMap { $0 })
-            let combined = diagonal1.union(diagonal2)
-
-            guard
-                diagonal1.count == 2,
-                diagonal2.count == 2,
-                combined.count == 2,
-                combined.contains("M"),
-                combined.contains("S")
-            else { return false }
-
-            return true
-        }.count
 
         printResult(dayPart: 2, message: "Count: \(count)")
     }
@@ -54,6 +49,12 @@ extension Year2024.Day4: Runnable {
         if index == needle.count { return true }
         guard needle[index] == grid.get(position) else { return false }
         return search(from: position + direction, in: grid, needle: needle, direction: direction, index: index + 1)
+    }
+}
+
+private extension [Character] {
+    func positions(of character: Character, yPos: Int) -> [Position] {
+        enumerated().compactMap { $0.element == character ? Position(y: yPos, x: $0.offset) : nil }
     }
 }
 
