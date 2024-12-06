@@ -4,14 +4,22 @@ extension Year2024.Day6: Runnable {
     func run(input: String) {
         let grid = splitInput(input).map { Array($0) }
         let startPosition = grid.findStart()
+        let visitedPositions = traverse(grid: grid, startPosition: startPosition)
 
-        part1(grid: grid, startPosition: startPosition)
+        part1(visitedPositions: visitedPositions)
     }
 
-    private func part1(grid: [[Character]], startPosition: Position) {
+    private func part1(visitedPositions: Set<Position>) {
+        printResult(dayPart: 1, message: "Visited positions: \(visitedPositions.count)")
+    }
+
+    private func traverse(
+        grid: [[Character]],
+        startPosition: Position
+    ) -> Set<Position> {
+        var visitedPositions: Set<Position> = [startPosition]
         var position = startPosition
         var direction = Direction.north
-        var visitedPositions: Set<Position> = [startPosition]
         var isInBounds = true
 
         repeat {
@@ -27,7 +35,7 @@ extension Year2024.Day6: Runnable {
             }
         } while isInBounds
 
-        printResult(dayPart: 1, message: "Visited positions: \(visitedPositions.count)")
+        return visitedPositions
     }
 }
 
