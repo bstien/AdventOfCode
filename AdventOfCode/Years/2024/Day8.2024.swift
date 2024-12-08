@@ -11,14 +11,21 @@ extension Year2024.Day8: Runnable {
 
     private func part1(grid: [[Character]], antennaMap: [Character: [Position]]) {
         var antinodes = Set<Position>()
+        var seenAntennaPairs = [Position: Set<Position>]()
+
         for antennaKind in antennaMap.keys {
             guard let antennaPositions = antennaMap[antennaKind] else { continue }
-            for antennaPosition in antennaPositions {
+            for antenna in antennaPositions {
                 for otherAntenna in antennaPositions {
-                    if antennaPosition == otherAntenna { continue }
-                    
-                    let diff = antennaPosition.diff(to: otherAntenna)
-                    antinodes.insert(antennaPosition + diff)
+                    guard antenna != otherAntenna, !(seenAntennaPairs[antenna]?.contains(otherAntenna) ?? false) else {
+                        continue
+                    }
+
+                    seenAntennaPairs[antenna, default: []].insert(otherAntenna)
+                    seenAntennaPairs[otherAntenna, default: []].insert(antenna)
+
+                    let diff = antenna.diff(to: otherAntenna)
+                    antinodes.insert(antenna + diff)
                     antinodes.insert(otherAntenna - diff)
                 }
             }
@@ -30,17 +37,22 @@ extension Year2024.Day8: Runnable {
 
     private func part2(grid: [[Character]], antennaMap: [Character: [Position]]) {
         var antinodes = Set<Position>()
+        var seenAntennaPairs = [Position: Set<Position>]()
 
         for antennaKind in antennaMap.keys {
             guard let antennaPositions = antennaMap[antennaKind] else { continue }
             for antenna in antennaPositions {
                 for otherAntenna in antennaPositions {
-                    if antenna == otherAntenna { continue }
+                    guard antenna != otherAntenna, !(seenAntennaPairs[antenna]?.contains(otherAntenna) ?? false) else {
+                        continue
+                    }
+
+                    seenAntennaPairs[antenna, default: []].insert(otherAntenna)
+                    seenAntennaPairs[otherAntenna, default: []].insert(antenna)
 
                     let diff = antenna.diff(to: otherAntenna)
-
                     antinodes.formUnion(findAntinodes(from: antenna, grid: grid, diff: diff, operator: +))
-                    antinodes.formUnion(findAntinodes(from: antenna, grid: grid, diff: diff, operator: -))
+                    antinodes.formUnion(findAntinodes(from: otherAntenna, grid: grid, diff: diff, operator: -))
                 }
             }
         }
@@ -54,9 +66,9 @@ extension Year2024.Day8: Runnable {
         diff: Position,
         operator: (Position, Position) -> Position
     ) -> Set<Position> {
-        let newPosition = `operator`(position, diff)
-        guard grid.isInBounds(newPosition) else { return [] }
-        return Set([newPosition]).union(findAntinodes(from: newPosition, grid: grid, diff: diff, operator: `operator`))
+        guard grid.isInBounds(position) else { return [] }
+        let antinodes = findAntinodes(from: `operator`(position, diff), grid: grid, diff: diff, operator: `operator`)
+        return Set([position]).union(antinodes)
     }
 
     private func parseAntennaMap(from grid: [[Character]]) -> [Character: [Position]] {
@@ -66,10 +78,7 @@ extension Year2024.Day8: Runnable {
             for x in grid[y].indices {
                 let character = grid[y][x]
                 if character == "." { continue }
-
-                var list = antennaMap[character, default: []]
-                list.append(Position(y: y, x: x))
-                antennaMap[character] = list
+                antennaMap[character, default: []].append(Position(y: y, x: x))
             }
         }
 
