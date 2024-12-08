@@ -24,7 +24,7 @@ extension Year2024.Day8: Runnable {
                     seenAntennaPairs[antenna, default: []].insert(otherAntenna)
                     seenAntennaPairs[otherAntenna, default: []].insert(antenna)
 
-                    let diff = antenna.diff(to: otherAntenna)
+                    let diff = antenna - otherAntenna
                     antinodes.insert(antenna + diff)
                     antinodes.insert(otherAntenna - diff)
                 }
@@ -50,7 +50,7 @@ extension Year2024.Day8: Runnable {
                     seenAntennaPairs[antenna, default: []].insert(otherAntenna)
                     seenAntennaPairs[otherAntenna, default: []].insert(antenna)
 
-                    let diff = antenna.diff(to: otherAntenna)
+                    let diff = antenna - otherAntenna
                     antinodes.formUnion(findAntinodes(from: antenna, grid: grid, diff: diff, operator: +))
                     antinodes.formUnion(findAntinodes(from: otherAntenna, grid: grid, diff: diff, operator: -))
                 }
@@ -68,7 +68,7 @@ extension Year2024.Day8: Runnable {
     ) -> Set<Position> {
         guard grid.isInBounds(position) else { return [] }
         let antinodes = findAntinodes(from: `operator`(position, diff), grid: grid, diff: diff, operator: `operator`)
-        return Set([position]).union(antinodes)
+        return antinodes.union([position])
     }
 
     private func parseAntennaMap(from grid: [[Character]]) -> [Character: [Position]] {
@@ -90,10 +90,6 @@ private struct Position: Hashable {
     let y: Int
     let x: Int
 
-    func diff(to other: Position) -> Position {
-        Position(y: y - other.y, x: x - other.x)
-    }
-
     static func +(lhs: Position, rhs: Position) -> Position {
         Position(y: lhs.y + rhs.y, x: lhs.x + rhs.x)
     }
@@ -105,6 +101,9 @@ private struct Position: Hashable {
 
 private extension [[Character]] {
     func isInBounds(_ position: Position) -> Bool {
-        indices.contains(position.y) && self[position.y].indices.contains(position.x)
+        position.y >= 0 &&
+        position.x >= 0 &&
+        position.y < count &&
+        position.x < self[position.y].count
     }
 }
