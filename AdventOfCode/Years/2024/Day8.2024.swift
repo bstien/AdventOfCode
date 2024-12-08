@@ -6,6 +6,7 @@ extension Year2024.Day8: Runnable {
         let antennaMap = parseAntennaMap(from: grid)
 
         part1(grid: grid, antennaMap: antennaMap)
+        part2(grid: grid, antennaMap: antennaMap)
     }
 
     private func part1(grid: [[Character]], antennaMap: [Character: [Position]]) {
@@ -25,6 +26,37 @@ extension Year2024.Day8: Runnable {
 
         let antinodeCount = antinodes.filter { grid.isInBounds($0) }.count
         printResult(dayPart: 1, message: "# of antinodes: \(antinodeCount)")
+    }
+
+    private func part2(grid: [[Character]], antennaMap: [Character: [Position]]) {
+        var antinodes = Set<Position>()
+
+        for antennaKind in antennaMap.keys {
+            guard let antennaPositions = antennaMap[antennaKind] else { continue }
+            for antenna in antennaPositions {
+                for otherAntenna in antennaPositions {
+                    if antenna == otherAntenna { continue }
+
+                    let diff = antenna.diff(to: otherAntenna)
+
+                    antinodes.formUnion(findAntinodes(from: antenna, grid: grid, diff: diff, operator: +))
+                    antinodes.formUnion(findAntinodes(from: antenna, grid: grid, diff: diff, operator: -))
+                }
+            }
+        }
+
+        printResult(dayPart: 2, message: "# of antinodes: \(antinodes.count)")
+    }
+
+    private func findAntinodes(
+        from position: Position,
+        grid: [[Character]],
+        diff: Position,
+        operator: (Position, Position) -> Position
+    ) -> Set<Position> {
+        let newPosition = `operator`(position, diff)
+        guard grid.isInBounds(newPosition) else { return [] }
+        return Set([newPosition]).union(findAntinodes(from: newPosition, grid: grid, diff: diff, operator: `operator`))
     }
 
     private func parseAntennaMap(from grid: [[Character]]) -> [Character: [Position]] {
