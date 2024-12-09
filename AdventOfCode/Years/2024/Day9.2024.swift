@@ -4,6 +4,7 @@ extension Year2024.Day9: Runnable {
     func run(input: String) {
         let disk = parseDisk(input)
         part1(disk: disk)
+        part2(disk: disk)
     }
 
     private func part1(disk: [Block]) {
@@ -43,6 +44,33 @@ extension Year2024.Day9: Runnable {
         printResult(dayPart: 1, message: "Checksum: \(disk.checksum)")
     }
 
+    private func part2(disk: [Block]) {
+        var disk = disk
+        let files = disk.filter { $0.isFile }
+
+        for file in files.reversed() {
+            guard
+                let freeSpace = disk.firstIndex(where: { $0.isFreeSpace && $0.size >= file.size }),
+                let fileIndex = disk.firstIndex(where: { $0.fileId == file.fileId }),
+                freeSpace < fileIndex
+            else {
+                continue
+            }
+            let freeSpaceBlock = disk[freeSpace]
+            let extraSpace = freeSpaceBlock.size - file.size
+
+            if extraSpace > 0 {
+                disk[fileIndex] = .freeSpace(size: file.size)
+                disk[freeSpace] = file
+                disk.insert(.freeSpace(size: extraSpace), at: freeSpace + 1)
+            } else {
+                disk.swapAt(freeSpace, fileIndex)
+            }
+        }
+
+        printResult(dayPart: 2, message: "Checksum: \(disk.checksum)")
+    }
+
     private func parseDisk(_ input: String) -> [Block] {
         let values = input.compactMap { Int(String($0)) }
 
@@ -63,6 +91,13 @@ private enum Block {
         switch self {
         case .file(_, let size): return size
         case .freeSpace(let size): return size
+        }
+    }
+
+    var fileId: Int? {
+        switch self {
+        case .file(let fileId, _): return fileId
+        case .freeSpace: return nil
         }
     }
 
