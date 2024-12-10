@@ -5,17 +5,28 @@ extension Year2024.Day10: Runnable {
         let map = splitInput(input).map { Array($0).map(String.init).compactMap(Int.init) }
 
         part1(map: map)
+        part2(map: map)
     }
 
     private func part1(map: [[Int]]) {
         let trailheads = map.trailheads
-        let paths = trailheads.sorted(by: { $0.x < $1.x && $0.y < $1.y })
+        let paths = trailheads
             .map { traverse(map, from: $0, nextNeedle: 1) }
             .reduce(0) { $0 + $1.count }
 
         printResult(dayPart: 1, message: "Complete paths: \(paths)")
     }
 
+    private func part2(map: [[Int]]) {
+        let trailheads = map.trailheads
+        let paths = trailheads
+            .map { traversePart2(map, from: $0, nextNeedle: 1) }
+            .reduce(0, +)
+
+        printResult(dayPart: 2, message: "Complete paths: \(paths)")
+    }
+    
+    /// Traverse until we find a 9 and return a set of seen 9s.
     private func traverse(
         _ map: [[Int]],
         from position: Position,
@@ -26,6 +37,19 @@ extension Year2024.Day10: Runnable {
         return surroundingPaths
             .map { traverse(map, from: $0, nextNeedle: needle + 1) }
             .reduce(into: Set(), { $0.formUnion($1) })
+    }
+
+    /// Traverse until we find a 9 and return the count of seen 9s.
+    private func traversePart2(
+        _ map: [[Int]],
+        from position: Position,
+        nextNeedle needle: Int
+    ) -> Int {
+        let surroundingPaths = map.find(needle, around: position)
+        if needle == 9 { return surroundingPaths.count }
+        return surroundingPaths
+            .map { traversePart2(map, from: $0, nextNeedle: needle + 1) }
+            .reduce(0, +)
     }
 }
 
