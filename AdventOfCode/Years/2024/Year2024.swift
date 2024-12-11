@@ -13,7 +13,7 @@ enum Year2024: Year {
         Day8.self,
         Day9.self,
         Day10.self,
-        //Day11.self,
+        Day11.self,
         //Day12.self,
         //Day13.self,
         //Day14.self,
