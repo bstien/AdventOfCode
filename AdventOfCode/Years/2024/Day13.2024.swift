@@ -5,28 +5,34 @@ extension Year2024.Day13: Runnable {
     func run(input: String) {
         let games = parseGames(input: input)
         part1(games: games)
+        part2(games: games)
     }
 
     private func part1(games: [Game]) {
-        var tokensNeeded = 0
-
-        games.forEach { game in
-            for bPresses in (0...game.prize.minPress(of: game.buttonB)) {
-                let bPos = game.buttonB * bPresses
-                var aPresses = 0
-                repeat {
-                    let endPos = bPos + (game.buttonA * aPresses)
-                    if endPos > game.prize { break }
-                    if endPos == game.prize {
-                        tokensNeeded += bPresses + (aPresses * 3)
-                        return
-                    }
-                    aPresses += 1
-                } while true
-            }
-        }
+        let tokensNeeded = games.compactMap(solve(game:))
+            .map { $0.bPresses + ($0.aPresses * 3) }
+            .sum
 
         printResult(dayPart: 1, message: "# of tokens needed: \(tokensNeeded)")
+    }
+
+    private func part2(games: [Game]) {
+        let games = games.map {
+            Game(
+                buttonA: $0.buttonA,
+                buttonB: $0.buttonB,
+                prize: Position(
+                    x: $0.prize.x + 10000000000000,
+                    y: $0.prize.y + 10000000000000
+                )
+            )
+        }
+
+        let tokensNeeded = games
+            .compactMap(solve(game:))
+            .map { $0.bPresses + ($0.aPresses * 3) }
+            .sum
+        printResult(dayPart: 2, message: "# of tokens needed: \(tokensNeeded)")
     }
 
     private func parseGames(input: String) -> [Game] {
@@ -59,6 +65,34 @@ extension Year2024.Day13: Runnable {
             )
         }
     }
+
+    private func solve(game: Game) -> (aPresses: Int, bPresses: Int)? {
+        let determinant = game.buttonA.x * game.buttonB.y - game.buttonA.y * game.buttonB.x
+        if determinant == 0 {
+            return nil
+        }
+
+        let numerator1 = game.buttonB.y * game.prize.x - game.buttonB.x * game.prize.y
+        let numerator2 = -game.buttonA.y * game.prize.x + game.buttonA.x * game.prize.y
+
+        if !numerator1.isMultiple(of: determinant) || !numerator2.isMultiple(of: determinant) {
+            return nil
+        }
+
+        let n1 = numerator1 / determinant
+        let n2 = numerator2 / determinant
+
+        let position = Position(
+            x: n1 * game.buttonA.x + n2 * game.buttonB.x,
+            y: n1 * game.buttonA.y + n2 * game.buttonB.y
+        )
+
+        if position != game.prize {
+            return nil
+        }
+
+        return (n1, n2)
+    }
 }
 
 private struct Game {
@@ -67,46 +101,12 @@ private struct Game {
     let prize: Position
 }
 
-private struct Position: Hashable, CustomStringConvertible {
+private struct Position: Hashable {
     let x: Int
     let y: Int
-
-    var description: String {
-        "(x: \(x), y: \(y))"
-    }
-
-    func minPress(of vector: Vector) -> Int {
-        let minX = Int(ceil(Double(x) / Double(vector.x)))
-        let minY = Int(ceil(Double(y) / Double(vector.y)))
-        return max(minX, minY)
-    }
-
-    static func +(lhs: Position, rhs: Vector) -> Position {
-        Position(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-    }
-
-    static func +(lhs: Position, rhs: Position) -> Position {
-        Position(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-    }
-
-    static func <(lhs: Position, rhs: Position) -> Bool {
-        lhs.x < rhs.x && lhs.y < rhs.y
-    }
-
-    static func >(lhs: Position, rhs: Position) -> Bool {
-        lhs.x > rhs.x && lhs.y > rhs.y
-    }
 }
 
-private struct Vector: Hashable, CustomStringConvertible {
+private struct Vector: Hashable {
     let x: Int
     let y: Int
-
-    var description: String {
-        "(x: \(x), y: \(y))"
-    }
-
-    static func *(vector: Vector, multiplier: Int) -> Position {
-        Position(x: vector.x * multiplier, y: vector.y * multiplier)
-    }
 }
