@@ -3,18 +3,17 @@ import Foundation
 extension Year2024.Day15: Runnable {
     func run(input: String) {
         let sections = splitInput(input, separatedBy: "\n\n")
-        let map = parseMap(sections[0])
-        let startPosition = startPosition(sections[0])
         let moves = parseMoves(sections[1])
-        part1(map: map, moves: moves, startPosition: startPosition)
+
+        part1(mapSection: sections[0], moves: moves)
     }
 
-    private func part1(map: Set<Obstacle>, moves: [Move], startPosition: Position) {
-        var map = map
-        var position = startPosition
+    private func part1(mapSection: String, moves: [Move]) {
+        var map = parseMap(mapSection, obstacleSize: .single)
+        var position = startPosition(mapSection, doubleWidth: false)
 
         for move in moves {
-            switch tryMove(from: position, move: move, map: map) {
+            switch tryMovePart1(from: position, move: move, map: map) {
             case .cantMove:
                 break
             case .moveBoxes(let boxesToMove):
@@ -35,19 +34,19 @@ extension Year2024.Day15: Runnable {
         printResult(dayPart: 1, message: "Sum: \(sum)")
     }
 
-    private func tryMove(
+    private func tryMovePart1(
         from position: Position,
         move: Move,
         map: Set<Obstacle>,
         boxesToMove: Set<Obstacle> = []
     ) -> MoveResult {
         let nextPosition = position + move
-        if let obstacle = map.first(where: { $0.position == nextPosition }) {
+        if let obstacle = map.first(where: { $0.isHit(nextPosition) }) {
             switch obstacle.kind {
             case .wall:
                 return .cantMove
             case .box:
-                return tryMove(
+                return tryMovePart1(
                     from: nextPosition,
                     move: move,
                     map: map,
@@ -59,7 +58,7 @@ extension Year2024.Day15: Runnable {
         }
     }
 
-    private func parseMap(_ input: String) -> Set<Obstacle> {
+    private func parseMap(_ input: String, obstacleSize: Obstacle.Size) -> Set<Obstacle> {
         var obstacles = Set<Obstacle>()
         for line in splitInput(input).enumerated() {
             for char in line.element.enumerated() {
@@ -67,9 +66,10 @@ extension Year2024.Day15: Runnable {
                 obstacles.insert(
                     Obstacle(
                         kind: obstacleKind,
+                        size: obstacleSize,
                         position: Position(
                             y: line.offset,
-                            x: char.offset
+                            x: obstacleSize == .single ? char.offset : char.offset * 2
                         )
                     )
                 )
@@ -84,11 +84,14 @@ extension Year2024.Day15: Runnable {
         }
     }
 
-    private func startPosition(_ input: String) -> Position {
+    private func startPosition(_ input: String, doubleWidth: Bool) -> Position {
         for line in splitInput(input).enumerated() {
             for char in line.element.enumerated() {
                 if char.element == "@" {
-                    return Position(y: line.offset, x: char.offset)
+                    return Position(
+                        y: line.offset,
+                        x: doubleWidth ? char.offset * 2 : char.offset
+                    )
                 }
             }
         }
@@ -103,11 +106,30 @@ private enum MoveResult {
 
 private struct Obstacle: Hashable {
     let kind: Kind
+    let size: Size
     var position: Position
+
+    var rightHalf: Position {
+        position + Move.east
+    }
+
+    func isHit(_ otherPosition: Position) -> Bool {
+        switch size {
+        case .single:
+            position == otherPosition
+        case .double:
+            position == otherPosition || rightHalf == otherPosition
+        }
+    }
 
     enum Kind: Character, Hashable {
         case wall = "#"
         case box = "O"
+    }
+
+    enum Size: Hashable {
+        case single
+        case double
     }
 }
 
