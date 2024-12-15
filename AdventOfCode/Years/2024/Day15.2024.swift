@@ -99,25 +99,28 @@ extension Year2024.Day15: Runnable {
             case .box:
                 switch move {
                 case .south, .north:
-                    let r1 = tryMovePart2(
+                    let leftResult = tryMovePart2(
                         from: obstacle.position,
                         move: move,
                         map: map,
                         boxesToMove: boxesToMove.union([obstacle])
                     )
-                    let r2 = tryMovePart2(
+                    guard case .moveBoxes(let leftBoxes) = leftResult else {
+                        return .cantMove
+                    }
+
+                    let rightResult = tryMovePart2(
                         from: obstacle.rightHalf,
                         move: move,
                         map: map,
                         boxesToMove: boxesToMove.union([obstacle])
                     )
 
-                    switch (r1, r2) {
-                    case (.moveBoxes(let lhs), .moveBoxes(let rhs)):
-                        return .moveBoxes(lhs.union(rhs))
-                    default:
+                    guard case .moveBoxes(let rightBoxes) = rightResult else {
                         return .cantMove
                     }
+
+                    return .moveBoxes(leftBoxes.union(rightBoxes))
                 case .west:
                     return tryMovePart2(
                         from: obstacle.position,
