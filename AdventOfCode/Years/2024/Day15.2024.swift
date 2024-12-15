@@ -6,6 +6,7 @@ extension Year2024.Day15: Runnable {
         let moves = parseMoves(sections[1])
 
         part1(mapSection: sections[0], moves: moves)
+        part2(mapSection: sections[0], moves: moves)
     }
 
     private func part1(mapSection: String, moves: [Move]) {
@@ -34,6 +35,32 @@ extension Year2024.Day15: Runnable {
         printResult(dayPart: 1, message: "Sum: \(sum)")
     }
 
+    private func part2(mapSection: String, moves: [Move]) {
+        var map = parseMap(mapSection, obstacleSize: .double)
+        var position = startPosition(mapSection, doubleWidth: true)
+
+        for move in moves {
+            switch tryMovePart2(from: position, move: move, map: map) {
+            case .cantMove:
+                break
+            case .moveBoxes(let boxesToMove):
+                position = position + move
+                map = map.subtracting(boxesToMove)
+                boxesToMove.forEach {
+                    var box = $0
+                    box.position = box.position + move
+                    map.insert(box)
+                }
+            }
+        }
+
+        let sum = map.filter { $0.kind == .box }.reduce(0) {
+            $0 + ($1.position.y * 100) + $1.position.x
+        }
+
+        printResult(dayPart: 2, message: "Sum: \(sum)")
+    }
+
     private func tryMovePart1(
         from position: Position,
         move: Move,
@@ -47,11 +74,65 @@ extension Year2024.Day15: Runnable {
                 return .cantMove
             case .box:
                 return tryMovePart1(
-                    from: nextPosition,
+                    from: obstacle.position,
                     move: move,
                     map: map,
                     boxesToMove: boxesToMove.union([obstacle])
                 )
+            }
+        } else {
+            return .moveBoxes(boxesToMove)
+        }
+    }
+
+    private func tryMovePart2(
+        from position: Position,
+        move: Move,
+        map: Set<Obstacle>,
+        boxesToMove: Set<Obstacle> = []
+    ) -> MoveResult {
+        let nextPosition = position + move
+        if let obstacle = map.first(where: { $0.isHit(nextPosition) }) {
+            switch obstacle.kind {
+            case .wall:
+                return .cantMove
+            case .box:
+                switch move {
+                case .south, .north:
+                    let r1 = tryMovePart2(
+                        from: obstacle.position,
+                        move: move,
+                        map: map,
+                        boxesToMove: boxesToMove.union([obstacle])
+                    )
+                    let r2 = tryMovePart2(
+                        from: obstacle.rightHalf,
+                        move: move,
+                        map: map,
+                        boxesToMove: boxesToMove.union([obstacle])
+                    )
+
+                    switch (r1, r2) {
+                    case (.moveBoxes(let lhs), .moveBoxes(let rhs)):
+                        return .moveBoxes(lhs.union(rhs))
+                    default:
+                        return .cantMove
+                    }
+                case .west:
+                    return tryMovePart2(
+                        from: obstacle.position,
+                        move: move,
+                        map: map,
+                        boxesToMove: boxesToMove.union([obstacle])
+                    )
+                case .east:
+                    return tryMovePart2(
+                        from: obstacle.rightHalf,
+                        move: move,
+                        map: map,
+                        boxesToMove: boxesToMove.union([obstacle])
+                    )
+                }
             }
         } else {
             return .moveBoxes(boxesToMove)
@@ -116,9 +197,9 @@ private struct Obstacle: Hashable {
     func isHit(_ otherPosition: Position) -> Bool {
         switch size {
         case .single:
-            position == otherPosition
+            return position == otherPosition
         case .double:
-            position == otherPosition || rightHalf == otherPosition
+            return position == otherPosition || rightHalf == otherPosition
         }
     }
 
