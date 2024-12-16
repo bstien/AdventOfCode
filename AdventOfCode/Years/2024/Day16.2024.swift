@@ -5,6 +5,7 @@ extension Year2024.Day16: Runnable {
         let (start, end, map) = parseMap(input)
 
         part1(start: start, end: end, map: map)
+        part2(start: start, end: end, map: map)
     }
 
     private func part1(start: Position, end: Position, map: Set<Position>) {
@@ -52,6 +53,65 @@ extension Year2024.Day16: Runnable {
         }
 
         printResult(dayPart: 1, message: "Min # of steps: \(minSteps)")
+    }
+
+    private func part2(start: Position, end: Position, map: Set<Position>) {
+        var minCost = 82460
+        var cache = [Position: (Int, Int)]()
+
+        func traverse(
+            position: Position,
+            direction: Direction,
+            end: Position,
+            map: Set<Position>,
+            visited: Set<Position> = [],
+            numberOfTurns: Int = 0
+        ) -> [MapResult] {
+            if visited.contains(position) { return [] }
+            if position == end {
+                return [MapResult(steps: visited, numberOfTurns: numberOfTurns)]
+            }
+
+            // Don't continue if a cheaper path has visited this same position.
+            if let cachedCount = cache[position], cachedCount.0 < visited.count, cachedCount.1 < numberOfTurns {
+                return []
+            } else {
+                cache[position] = (visited.count, numberOfTurns)
+            }
+
+            if minCost <= visited.count + (numberOfTurns * 1000) {
+                return []
+            }
+
+            var visited = visited
+            visited.insert(position)
+
+            let availablePaths = map.paths(from: position, direction: direction)
+            return availablePaths.flatMap {
+                traverse(
+                    position: $0.0,
+                    direction: $0.1,
+                    end: end,
+                    map: map,
+                    visited: visited,
+                    numberOfTurns: numberOfTurns + ($0.1 == direction ? 0 : 1)
+                )
+            }
+        }
+
+        let results = traverse(position: start, direction: .east, end: end, map: map, visited: [])
+        let stepCount = results.reduce(into: [Int: Set<Position>]()) {
+            let cost = $1.steps.count + ($1.numberOfTurns * 1000)
+            $0[cost, default: []].formUnion($1.steps)
+        }
+
+        let seatCount = stepCount.min(by: { $0.key < $1.key })?.value.count
+        guard let seatCount else {
+            printResult(result: .fail, dayPart: 1, message: "Could not get min number of steps")
+            return
+        }
+
+        printResult(dayPart: 2, message: "# of seats: \(seatCount + 1)")
     }
 
     private func parseMap(_ input: String) -> (start: Position, end: Position, map: Set<Position>) {
