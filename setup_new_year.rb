@@ -10,13 +10,9 @@ def code_for_day(day, year)
       func run(input: String) {
           let lines = splitInput(input)
           part1(lines: lines)
-          part2(lines: lines)
       }
 
       private func part1(lines: [String]) {
-      }
-
-      private func part2(lines: [String]) {
       }
   }
   SWIFT
