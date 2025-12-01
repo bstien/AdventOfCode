@@ -17,25 +17,7 @@ extension Year2025.Day1: Runnable {
         var landingsOnZero = 0
 
         for rotation in rotations {
-            switch rotation {
-            case .l(let value):
-                position = position - value
-            case .r(let value):
-                position = position + value
-            }
-
-            let division = position.quotientAndRemainder(dividingBy: 100)
-
-            if position > 100 {
-                position = position.remainderReportingOverflow(dividingBy: 100).partialValue
-            } else if position < 0 {
-                let remainder = position.remainderReportingOverflow(dividingBy: -100).partialValue
-                position = remainder + 100
-            }
-
-            if position == 100 {
-                position = 0
-            }
+            position = (100 + position + rotation.value) % 100
 
             if position == 0 {
                 landingsOnZero += 1
@@ -87,6 +69,13 @@ extension Year2025.Day1 {
     enum Rotation {
         case l(Int)
         case r(Int)
+
+        var value: Int {
+            switch self {
+            case .l(let int): -int
+            case .r(let int): int
+            }
+        }
 
         static func parse(_ line: String) -> Rotation {
             var line = line
