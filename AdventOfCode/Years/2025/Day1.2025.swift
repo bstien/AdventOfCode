@@ -4,9 +4,12 @@ extension Year2025.Day1: Runnable {
     func run(input: String) {
         let lines = splitInput(input)
         let rotations = lines.map(Rotation.parse)
-        let landingOnZero = part1(start: 50, rotations: rotations)
 
-        printResult(dayPart: 1, message: "Number of times at 0: \(landingOnZero)")
+        let landingOnZero = part1(start: 50, rotations: rotations)
+        printResult(dayPart: 1, message: "Number of times landing at 0: \(landingOnZero)")
+
+        let passingZero = part2(start: 50, rotations: rotations)
+        printResult(dayPart: 2, message: "Number of times passing 0: \(passingZero)")
     }
 
     private func part1(start: Int, rotations: [Rotation]) -> Int {
@@ -21,10 +24,17 @@ extension Year2025.Day1: Runnable {
                 position = position + value
             }
 
-            if position >= 100 {
+            let division = position.quotientAndRemainder(dividingBy: 100)
+
+            if position > 100 {
                 position = position.remainderReportingOverflow(dividingBy: 100).partialValue
             } else if position < 0 {
-                position = position.remainderReportingOverflow(dividingBy: -100).partialValue
+                let remainder = position.remainderReportingOverflow(dividingBy: -100).partialValue
+                position = remainder + 100
+            }
+
+            if position == 100 {
+                position = 0
             }
 
             if position == 0 {
@@ -33,6 +43,43 @@ extension Year2025.Day1: Runnable {
         }
 
         return landingsOnZero
+    }
+
+    private func part2(start: Int, rotations: [Rotation]) -> Int {
+        var position = start
+        var passingsOfZero = 0
+
+        for rotation in rotations {
+            let startsAtZero = position == 0
+
+            switch rotation {
+            case .l(let value):
+                position = position - value
+            case .r(let value):
+                position = position + value
+            }
+
+            let division = position.quotientAndRemainder(dividingBy: 100)
+            passingsOfZero += abs(division.quotient)
+
+            if position < 0 && position.isMultiple(of: -100) {
+                passingsOfZero += 1
+            } else if position == 0 {
+                passingsOfZero += 1
+            } else if division.remainder < 0 && !startsAtZero {
+                passingsOfZero += 1
+            }
+
+            if division.remainder > 0 {
+                position = division.remainder
+            } else if division.remainder < 0 {
+                position = 100 - abs(division.remainder)
+            } else {
+                position = 0
+            }
+        }
+
+        return passingsOfZero
     }
 }
 
