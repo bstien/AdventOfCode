@@ -1,3 +1,3 @@
 import Foundation
 
-Year2024.runLatest(runTask: true, runTest: true)
+Year2025.runLatest(runTask: true, runTest: true)
