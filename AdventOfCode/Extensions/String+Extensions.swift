@@ -20,4 +20,15 @@ extension String {
         let range = NSRange(location: 0, length: utf16.count)
         return regex.firstMatch(in: self, options: [], range: range) != nil
     }
+
+    func split(separatedBy: String = "\n", omittingEmptySubsequences: Bool = true) -> [String] {
+        self
+            .components(separatedBy: separatedBy)
+            .compactMap { element in
+                if omittingEmptySubsequences, element.isEmpty {
+                    return nil
+                }
+                return element
+            }
+    }
 }

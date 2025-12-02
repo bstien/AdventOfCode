@@ -32,14 +32,10 @@ extension Day {
     }
 
     func splitInput(_ input: String, separatedBy: String = "\n", omittingEmptySubsequences: Bool = true) -> [String] {
-        input
-            .components(separatedBy: separatedBy)
-            .compactMap { element in
-                if omittingEmptySubsequences, element.isEmpty {
-                    return nil
-                }
-                return element
-            }
+        input.split(
+            separatedBy: separatedBy,
+            omittingEmptySubsequences: omittingEmptySubsequences
+        )
     }
 
     func printResult(result: Result = .success, dayPart: Int, message: String) {
