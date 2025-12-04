@@ -6,6 +6,9 @@ extension Year2025.Day4: Runnable {
 
         let part1Sum = part1(map: map)
         printResult(dayPart: 1, message: "Accessible rolls of paper: \(part1Sum)")
+
+        let part2Sum = part2(map: map)
+        printResult(dayPart: 2, message: "Removed rolls of paper: \(part2Sum)")
     }
 
     private func part1(map: [[Position]]) -> Int {
@@ -46,17 +49,40 @@ extension Year2025.Day4: Runnable {
 
         return true
     }
+
+    private func part2(map: [[Position]]) -> Int {
+        var map = map
+        return traverse(map: &map)
+    }
+
+    private func traverse(map: inout [[Position]]) -> Int {
+        var removedRolls = 0
+
+        for y in map.indices {
+            for x in map[y].indices where map[y][x] == .paper {
+                if canReach(x: x, y: y, map: map, maxPaper: 3) {
+                    removedRolls += 1
+                    map[y][x] = .removedPaper
+                }
+            }
+        }
+
+        if removedRolls == 0 { return 0 }
+        return removedRolls + traverse(map: &map)
+    }
 }
 
 extension Year2025.Day4 {
     enum Position {
         case paper
         case empty
+        case removedPaper
 
         var symbol: String {
             switch self {
             case .paper: "@"
             case .empty: "."
+            case .removedPaper: "x"
             }
         }
 
