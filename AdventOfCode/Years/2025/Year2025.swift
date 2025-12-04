@@ -15,18 +15,6 @@ enum Year2025: Year {
         //Day10.self,
         //Day11.self,
         //Day12.self,
-        //Day13.self,
-        //Day14.self,
-        //Day15.self,
-        //Day16.self,
-        //Day17.self,
-        //Day18.self,
-        //Day19.self,
-        //Day20.self,
-        //Day21.self,
-        //Day22.self,
-        //Day23.self,
-        //Day24.self,
     ]
 }
 
@@ -43,16 +31,4 @@ extension Year2025 {
     class Day10: Day {}
     class Day11: Day {}
     class Day12: Day {}
-    class Day13: Day {}
-    class Day14: Day {}
-    class Day15: Day {}
-    class Day16: Day {}
-    class Day17: Day {}
-    class Day18: Day {}
-    class Day19: Day {}
-    class Day20: Day {}
-    class Day21: Day {}
-    class Day22: Day {}
-    class Day23: Day {}
-    class Day24: Day {}
 }
