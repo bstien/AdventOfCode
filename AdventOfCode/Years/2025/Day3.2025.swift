@@ -21,34 +21,25 @@ extension Year2025.Day3: Runnable {
 
     private func findHighestCombination(in batteries: [Int], keepHighest keepCount: Int) -> Int {
         var toKeep = Array(repeating: 0, count: keepCount)
-        var nextIndexToInsert = 0
+        let diff = abs(keepCount - batteries.count)
 
         for (index, battery) in batteries.enumerated() {
-            let minIndexToCheck = max(0, index - abs(keepCount - batteries.count))
+            let minIndexToCheck = max(0, index - diff)
 
             var hasInserted = false
-            for (i, b) in toKeep.enumerated() {
-                if i < minIndexToCheck {
-                    continue
-                }
-
+            for (i, b) in toKeep.enumerated() where i >= minIndexToCheck {
                 if hasInserted {
                     toKeep[i] = 0
                 } else if battery > b {
                     toKeep[i] = battery
-                    nextIndexToInsert = i
                     hasInserted = true
                 }
             }
-            nextIndexToInsert += 1
         }
 
-
-        let sum = toKeep
+        return toKeep
             .reversed()
             .enumerated()
-            .reduce(0) { $0 + ($1.element * max(1, Int(pow(10, Double($1.offset))))) }
-
-        return sum
+            .reduce(0) { $0 + ($1.element * Int(pow(10, Double($1.offset)))) }
     }
 }
