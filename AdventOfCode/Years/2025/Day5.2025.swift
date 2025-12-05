@@ -10,6 +10,9 @@ extension Year2025.Day5: Runnable {
 
         let part1Sum = part1(ids: ids, ranges: ranges)
         printResult(dayPart: 1, message: "# of fresh ingredients: \(part1Sum)")
+
+        let part2Sum = part2(ranges: ranges)
+        printResult(dayPart: 2, message: "# of fresh ingredients: \(part2Sum)")
     }
 
     private func part1(ids: [Int], ranges: [FreshRange]) -> Int {
@@ -21,6 +24,49 @@ extension Year2025.Day5: Runnable {
         }
 
         return freshIngredientCount
+    }
+
+    private func part2(ranges: [FreshRange]) -> Int {
+        var freshIdsCount = 0
+        for range in mergeRanges(ranges: ranges) {
+            freshIdsCount += range.count
+        }
+
+        return freshIdsCount
+    }
+
+    private func mergeRanges(ranges: [FreshRange]) -> [FreshRange] {
+        var mergedRanges = [FreshRange]()
+        var didAnyMergesOccur = false
+
+        for range in ranges {
+            var didMergeThisRange = false
+            for (otherIndex, otherRange) in mergedRanges.enumerated() {
+                if let newRange = mergeIfOverlapping(range, otherRange) {
+                    mergedRanges[otherIndex] = newRange
+                    didAnyMergesOccur = true
+                    didMergeThisRange = true
+                    break
+                }
+            }
+
+            if !didMergeThisRange {
+                mergedRanges.append(range)
+            }
+        }
+
+        if !didAnyMergesOccur {
+            return mergedRanges
+        }
+
+        return mergeRanges(ranges: mergedRanges)
+    }
+
+    private func mergeIfOverlapping(_ a: FreshRange, _ b: FreshRange) -> FreshRange? {
+        if a.overlaps(b) {
+            return min(a.lowerBound, b.lowerBound)...max(a.upperBound, b.upperBound)
+        }
+        return nil
     }
 }
 
