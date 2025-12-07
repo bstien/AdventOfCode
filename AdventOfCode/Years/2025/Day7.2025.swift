@@ -22,7 +22,8 @@ extension Year2025.Day7: Runnable {
         let part1Sum = part1(start: start, splitters: splitters)
         printResult(dayPart: 1, message: "# of splits: \(part1Sum)")
 
-        let part2Sum = part2(column: start, row: 1, splitters: splitters)
+        var cache = [Int: [Int: Int]]()
+        let part2Sum = part2(column: start, row: 1, cache: &cache, splitters: splitters)
         printResult(dayPart: 2, message: "# of splits: \(part2Sum)")
     }
 
@@ -48,14 +49,22 @@ extension Year2025.Day7: Runnable {
         return numberOfSplits
     }
 
-    private func part2(column: Int, row: Int, splitters: [Set<Int>]) -> Int {
+    private func part2(column: Int, row: Int, cache: inout [Int: [Int: Int]], splitters: [Set<Int>]) -> Int {
         if row == splitters.count - 1 { return 1 }
 
-        if splitters[row].contains(column) {
-            return part2(column: column - 1, row: row + 1, splitters: splitters) +
-            part2(column: column + 1, row: row + 1, splitters: splitters)
+        if let count = cache[row]?[column] {
+            return count
         }
 
-        return part2(column: column, row: row + 1, splitters: splitters)
+        if splitters[row].contains(column) {
+            let leftCount = part2(column: column - 1, row: row + 1, cache: &cache, splitters: splitters)
+            let rightCount = part2(column: column + 1, row: row + 1, cache: &cache, splitters: splitters)
+
+            let count = leftCount + rightCount
+            cache[row, default: [:]][column] = count
+            return count
+        }
+
+        return part2(column: column, row: row + 1, cache: &cache, splitters: splitters)
     }
 }
