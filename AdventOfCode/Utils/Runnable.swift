@@ -7,7 +7,7 @@ protocol Runnable {
 
 extension Runnable {
     func run(input: String) {
-        fatalError("Implement Runnable.run(input:")
+        fatalError("Missing implementation for \(String(describing: self)).run(input:)")
     }
 
     func run(input: String, isTest: Bool) {
