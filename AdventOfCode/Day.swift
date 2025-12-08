@@ -64,7 +64,7 @@ extension Day {
         switch self {
         case let runnable as Runnable:
             start = CACurrentMediaTime()
-            runnable.run(input: input)
+            runnable.run(input: input, isTest: isTest)
             end = CACurrentMediaTime()
         case let asyncRunnable as AsyncRunnable:
             start = CACurrentMediaTime()
